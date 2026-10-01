@@ -1,0 +1,29 @@
+[workspace]
+authors = ["FreekPols <c.f.j.pols@tudelft.nl>"]
+channels = ["conda-forge"]
+name = "py_thermo_sim_dev"
+platforms = ["win-64", "linux-64", "osx-64"]
+version = "0.1.0"
+
+[tasks]
+editor = "jupyter lab"
+preview = "myst start"
+
+[dependencies]
+numpy = ">=2.5.2,<3"
+matplotlib = ">=3.11.1,<4"
+scipy = ">=1.18.0,<2"
+ipywidgets = ">=8.1.9,<9"
+pandas = ">=3.0.5,<4"
+jupytext = ">=1.19.5,<2"
+
+[pypi-dependencies]
+jupyterlab-myst = ">=2.7.0, <3"
+
+[feature.development.dependencies]
+jupyterlab = ">=4.6.3,<5"
+mystmd = ">=1.10.1,<2"
+
+[environments]
+ci = []
+development = ["development"]
