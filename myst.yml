@@ -2,21 +2,22 @@
 version: 1
 project:
   id: d4ed63d4-e4ba-4d57-b9c3-8f8af2dac267
-  # title:
+  title: Python Thermodynamica Simulaties voor TN13015
   # description:
   # keywords: []
-  # authors: []
+  authors: 
+    - name: Freek Pols
+    - name: Roel Smit
+
   github: https://github.com/Contemporary-Physicslab/py_thermo_sim_dev
-  # To autogenerate a Table of Contents, run "myst init --write-toc"
+
   toc:
     - file: index.md
-    - file: simulations/somefile.md
+    - file: simulations/NB1_deeltjesmodel.md
     - file: simulations/opdracht.ipynb
     - title: Appendix
       children:
       - file: codechecks.md
-site:
-  template: book-theme
-  # options:
-  #   favicon: favicon.ico
-  #   logo: site_logo.png
+
+extends:
+  - https://gitlab.tudelft.nl/oicm/assets/-/raw/main/style.yml?ref_type=heads
