@@ -10,9 +10,11 @@ project:
   # To autogenerate a Table of Contents, run "myst init --write-toc"
   toc:
     - file: index.md
-    - file: somefile.md
-    - file: opdracht.ipynb
-    - file: codechecks.md
+    - file: simulations/somefile.md
+    - file: simulations/opdracht.ipynb
+    - title: Appendix
+      children:
+      - file: codechecks.md
 site:
   template: book-theme
   # options:
