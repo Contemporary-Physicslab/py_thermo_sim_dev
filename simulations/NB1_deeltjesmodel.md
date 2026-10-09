@@ -455,7 +455,6 @@ Controleer je eigen antwoord door de functie hierboven even te vervangen door de
 ```
 
 ```python tags=["NB1_doorlopendedoos"]
-
 # doorlopende doos
 def update(frame):
     particle.update_position()
@@ -465,15 +464,13 @@ def update(frame):
         particle.r[0] = -particle.r[0]
 ### end-solution
     return dot,         
-
 ```
 
 ```{exercise} Harde wanden
 :label: ex-deeltjesmodel-3
-Een tweede optie is dat we een doos hebben met harde wanden.
-Op het moment dat het deeltje de wand raakt, wordt deze gereflecteerd.
-Schrijf de code zodat het deeltje in zijn doos blijft, waarbij de doos harde wanden heeft.
-Om je vorige code te bewaren kun je er een comment van maken (#).
+Een tweede optie is dat we een doos hebben met harde wanden. Op het moment dat het deeltje de wand raakt, wordt deze gereflecteerd. Schrijf hieronder de code zodat het deeltje in zijn doos blijft, waarbij de doos harde wanden heeft.
+
+Test wederom je code door de vernieuwde functie hierboven te plakken.
 ```
 
 ```python tags=["NB1_hardewand"]
@@ -486,4 +483,135 @@ def update(frame):
         particle.v[0] = -particle.v[0]
 ### end-solution
     return dot,
+```
+
+{exercise}
+:label: ex-deeltjesmodel-4
+
+Verander nu de code zodanig dat de beginsnelheid gegeven wordt door $\vec{v}=5\hat{x} + 3\hat{y}$ en het deeltje botst tegen alle muren.
+```
+
+```python
+# Simulation parameters
+dt = 0.1         # time step
+num_steps = 500  # number of time steps
+
+### begin-solution
+particle = ParticleClass(m=1.0, v=[5.0, 3.0], r=[0.0, 0.0],R=1.0)  
+### end-solution
+
+# Create the figure and axis
+fig, ax = plt.subplots()
+ax.set_xlim(-10, 10)
+ax.set_ylim(-10, 10)
+ax.set_aspect('equal')
+ax.set_title("Particle Animation")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+# Create the particle as a red dot
+dot, = ax.plot([], [], 'ro', markersize=10);
+
+# Initialization function for animation
+def init():
+    dot.set_data([], [])
+    return dot,
+
+# Update function for each frame
+def update(frame):
+    particle.update_position()
+    dot.set_data([particle.r[0]], [particle.r[1]])
+    ### begin-solution
+    if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+        particle.v[0] = -particle.v[0]
+    if particle.r[1]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+        particle.v[1] = -particle.v[1]
+    ### end-solution
+    return dot,
+
+# Create animation
+ani = FuncAnimation(fig, update, frames=range(200), init_func=init, blit=True, interval=50)
+
+# For Jupyter notebook:
+from IPython.display import HTML
+HTML(ani.to_jshtml())
+```
+
+Laten we teruggaan naar ons deeltje. Er is een functie om de positie bij te werken, hoewel de snelheid hetzelfde lijkt te blijven... kunnen we de snelheid veranderen door (bijvoorbeeld) de versnelling door de zwaartekracht?
+
+````{exercise}
+:label: ex-deeltjesmodel-5
+
+Hieronder is de ParticleClass aangepast zodat er gebruik gemaakt kan worden van een versnelling.
+Maak de simulatie van het deeltje zodat het zich beweegt in een zwaartekrachtsveld met $a = -9.81\hat{y}$.
+
+```{tip}
+De tweede solution kun je van hierboven kopieren natuurlijk!
+```
+````
+
+```python
+# Maken van de class met versnelling
+class ParticleClass:
+    def __init__(self, m, v, r, R):
+        self.m = m                         # mass of the particle
+        self.v = np.array(v, dtype=float)  # velocity vector
+        self.r = np.array(r, dtype=float)  # position vector
+        self.R = R                         # radius of the particle
+
+    def update_position(self):
+        self.r += self.v * dt
+    
+    def update_velocity(self, a):
+        self.v += a*dt
+```
+
+
+```python
+
+# Simulation parameters
+dt = 0.1         # time step
+num_steps = 500  # number of time steps
+particle = ParticleClass(m=1.0, v=[5.0, 0], r=[0.0, 0.0],R=1.0)  
+### begin-solution
+a = np.array([0.0, -9.81])  
+### end-solution
+# Create the figure and axis
+fig, ax = plt.subplots()
+ax.set_xlim(-10, 10)
+ax.set_ylim(-10, 10)
+ax.set_aspect('equal')
+ax.set_title("Particle Animation")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+# Create the particle as a red dot
+dot, = ax.plot([], [], 'ro', markersize=10);
+
+# Initialization function for animation
+def init():
+    dot.set_data([], [])
+    return dot,
+
+# Update function for each frame
+def update(frame):
+    particle.update_velocity(a)
+    particle.update_position()
+    
+    dot.set_data([particle.r[0]], [particle.r[1]])
+    ### begin-solution
+    if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+        particle.v[0] = -particle.v[0]
+    if particle.r[1]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+        particle.v[1] = -particle.v[1]
+    ### end-solution
+    return dot,
+
+# Create animation
+ani = FuncAnimation(fig, update, frames=range(200), init_func=init, blit=True, interval=50)
+
+# For Jupyter notebook:
+from IPython.display import HTML
+HTML(ani.to_jshtml())
+
 ```
