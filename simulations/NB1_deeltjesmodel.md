@@ -461,7 +461,7 @@ def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
 ### begin-solution
-    if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+    if particle.r[0]**2>=100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.r[0] = -particle.r[0]
 ### end-solution
     return dot,         
@@ -476,13 +476,13 @@ Schrijf de code zodat het deeltje in zijn doos blijft, waarbij de doos harde wan
 Om je vorige code te bewaren kun je er een comment van maken (#).
 ```
 
-```python
+```python tags=["NB1_hardewand"]
 # harde wanden
 def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
 ### begin-solution
-    if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+    if particle.r[0]**2>=100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[0] = -particle.v[0]
 ### end-solution
     return dot,
