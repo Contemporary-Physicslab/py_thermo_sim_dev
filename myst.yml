@@ -13,6 +13,8 @@ project:
 
   toc:
     - file: index.md
+    - file: simulations/repostart.md
+    - file: simulations/intro.md
     - file: simulations/NB1_deeltjesmodel.md
     - file: simulations/opdracht.ipynb
     - title: Appendix
