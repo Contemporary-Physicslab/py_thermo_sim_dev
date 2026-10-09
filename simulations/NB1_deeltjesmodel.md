@@ -454,18 +454,18 @@ Pas de onderstaande code aan zodat de doos een aaneengesloten doos is; als hij l
 Controleer je eigen antwoord door de functie hierboven even te vervangen door deze functie, bekijk het resultaat.
 ```
 
-```python
+```{code-cell} python
+:tag: NB1_doorlopendedoos
 # doorlopende doos
 def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
 ### begin-solution
-# Update function for each frame
     if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.r[0] = -particle.r[0]
-    
-    return dot,         
 ### end-solution
+    return dot,         
+
 ```
 
 ```{exercise} Harde wanden
@@ -477,5 +477,13 @@ Om je vorige code te bewaren kun je er een comment van maken (#).
 ```
 
 ```python
-
+# harde wanden
+def update(frame):
+    particle.update_position()
+    dot.set_data([particle.r[0]], [particle.r[1]])
+### begin-solution
+    if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
+        particle.v[0] = -particle.v[0]
+### end-solution
+    return dot,
 ```
