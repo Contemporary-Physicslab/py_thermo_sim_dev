@@ -449,8 +449,9 @@ Een van de dingen die je kunt opmerken, is dat het deeltje niet in zijn doos bli
 
 ```{exercise} Doorlopende doos
 :label: ex-deeltjesmodel-2
-Verander de code zodat de doos een aaneengesloten doos is; als hij links eruit vliegt, komt hij er rechts in (en vice versa).
-Een goede plek, voor nu, om dit te doen is in de update functie.
+Pas de onderstaande code aan zodat de doos een aaneengesloten doos is; als hij links eruit vliegt, komt hij er rechts in (en vice versa).
+
+Controleer je eigen antwoord door de functie hierboven even te vervangen door deze functie, bekijk het resultaat.
 ```
 
 ```python

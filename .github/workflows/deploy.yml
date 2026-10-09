@@ -12,7 +12,7 @@ permissions:
   
 jobs:
   deploy:
-    uses: FreekPols/JB-workflows/.github/workflows/menu.yml@main
+    uses: FreekPols/JB-workflows/.github/workflows/menu2.yml@main
     with:
       build_pdf: false
       execute_python: false
