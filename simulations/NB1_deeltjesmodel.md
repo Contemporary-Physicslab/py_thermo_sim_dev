@@ -454,8 +454,8 @@ Pas de onderstaande code aan zodat de doos een aaneengesloten doos is; als hij l
 Controleer je eigen antwoord door de functie hierboven even te vervangen door deze functie, bekijk het resultaat.
 ```
 
-```{code-cell} python
-:tag: NB1_doorlopendedoos
+```python tags=["NB1_doorlopendedoos"]
+
 # doorlopende doos
 def update(frame):
     particle.update_position()
