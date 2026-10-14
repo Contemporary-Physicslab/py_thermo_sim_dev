@@ -4,6 +4,7 @@ import html
 import numpy as np
 from types import SimpleNamespace
 import jupytext 
+from scripts.checker import CodeChecker
 
 
 from NB1 import (
@@ -13,18 +14,19 @@ from NB1 import (
     check_eindantwoord,
 )
 
+from NB2 import check_ex7
 
-def get_tagged_cell(notebook_path, tag):
-    nb = jupytext.read(notebook_path)
+# def get_tagged_cell(notebook_path, tag):
+#     nb = jupytext.read(notebook_path)
 
-    for cell in nb.cells:
-        if cell.cell_type != "code":
-            continue
+#     for cell in nb.cells:
+#         if cell.cell_type != "code":
+#             continue
 
-        if tag in cell.metadata.get("tags", []):
-            return cell.source
+#         if tag in cell.metadata.get("tags", []):
+#             return cell.source
 
-    raise ValueError(f"Geen codecel gevonden met tag {tag!r}")
+#     raise ValueError(f"Geen codecel gevonden met tag {tag!r}")
 
 # CODE BELOW FOR .IPYNB NOTEBOOKS, NOT FOR .MD FILES
 # def get_tagged_cell(notebook_path, tag):
@@ -39,43 +41,15 @@ def get_tagged_cell(notebook_path, tag):
 results = []
 
 
-def check_cell(name, notebook_path, test_function, variable=None):
+def check_cell(name, notebook_path, test_function, with_previous_cells=False):
 
     try:
-        # Find the tagged cell
-        source = get_tagged_cell(notebook_path, name)
+        checker = CodeChecker(notebook_path)
 
-        # Provide dependencies for the student's code
-        namespace = {
-            "np": np,
-            "dt": 0.1,
-        }
-
-        # Execute the student's code
-        # Syntax errors are now caught by try/except
-        exec(source, namespace)
-
-        if variable is not None:
-            # Retrieve a variable, e.g. num_botsingen
-            student_object = namespace[variable]
-
-        else:
-            # Retrieve the function or class defined by the student
-            objects = [
-                value
-                for key, value in namespace.items()
-                if callable(value) and not key.startswith("__")
-            ]
-
-            if len(objects) != 1:
-                raise ValueError(
-                    f"Expected one function or class, found {len(objects)}."
-                )
-
-            student_object = objects[0]
+        plots, namespace = checker.checkWithTag(name, run_previous_cells=with_previous_cells)
 
         # Run the corresponding test from NB1.py
-        test_function(student_object)
+        test_function(namespace, plots)
 
         results.append((name, True, ""))
         print(f"PASS: {name}")
@@ -87,6 +61,7 @@ def check_cell(name, notebook_path, test_function, variable=None):
 
 # Run all checks
 notebook_1 = "simulations/NB1_deeltjesmodel.md"
+notebook_2 = "simulations/NB2_brownianmotion.md"
 
 check_cell("NB1_doorlopendedoos", notebook_1, check_doorlopende_doos)
 
@@ -94,7 +69,9 @@ check_cell("NB1_hardewand", notebook_1, check_harde_wanden)
 
 check_cell("NB1_botsingsvoorwaarde", notebook_1, check_botsingsvoorwaarde)
 
-check_cell("NB1_eindantwoord", notebook_1, check_eindantwoord, variable="num_botsingen")
+check_cell("NB1_eindantwoord", notebook_1, check_eindantwoord)
+
+check_cell("NB2_ex7", notebook_2, check_ex7, with_previous_cells=True)
 
 
 ##### GENERATE MARKDOWN REPORT #####
