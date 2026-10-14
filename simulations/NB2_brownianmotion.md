@@ -329,7 +329,7 @@ Om te controleren of onze code werkt passen we nu de code aan.
 Voeg aan de simulatie een regel toe die voor elke tijdstap bepaalt wat de totale kinetische energie is voor alle deeltjes en neem deze waarde op in een array die bij elke tijdstap met één element groeit in lengte. Maak vervolgens een plot van de totale kinetische energie als functie van de tijd gedurende een simulatie van 100 tijdstappen.
 ```
 
-```python
+```python tags=["NB2_ex7"]
 # plotten van kinetische energie als functie van tijd
 
 particles = []
