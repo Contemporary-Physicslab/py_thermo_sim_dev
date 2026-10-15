@@ -37,7 +37,7 @@ DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 
 De klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
 
-```python
+```python tag: ["NB3_init_1"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -84,7 +84,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 Het volume met de 'oude' randvoorwaarden. Dit zijn niet de randvoorwaarden van het vorige werkblad, maar de randvoorwaarden die je eerder hebt gebruikt. Hierbij botsen de deeltjes elastisch met de wanden van het volume. 
 
-```python
+```python tag: ["NB3_init_2"]
 def box_collision(particle: ParticleClass):
     ''' botsing met harde wanden '''
     if abs(particle.r[0]) + particle.R > BOX_SIZE_0/2: 
@@ -97,7 +97,7 @@ def box_collision(particle: ParticleClass):
 
 Het uitvoeren en samennemen van deze functies over een lijst met deeltjes:
 
-```python
+```python tag: ["NB3_init_3"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     particles.clear()
@@ -203,7 +203,7 @@ Hierbij is
 Schrijf een functie die de temperatuur van het gas in onze simulatie bepaalt:
 ```
 
-```python tags=["NB3_tempfun"]
+```python tags=[]
 def temperature(particles) -> float:
     temp = 0.0 
     ### begin-solution
@@ -220,7 +220,7 @@ def temperature(particles) -> float:
 Gebruik deze functie om een simulatie te maken waarin je de temperatuur als functie van de tijdstap voor 100 tijdstappen plot.
 ```
 
-```python
+```python tags=["NB3_check_const_temp"]
 # ruimte voor uitwerking
 
 particles = []
