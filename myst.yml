@@ -19,6 +19,7 @@ project:
     - file: simulations/intro.md
     - file: simulations/NB1_deeltjesmodel.md
     - file: simulations/NB2_brownianmotion.md
+    - file: simulations/NB3_druktemp.md
     - title: Appendix
       children:
       - file: codechecks.md
