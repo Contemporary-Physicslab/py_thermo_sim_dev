@@ -37,7 +37,7 @@ DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 
 De klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
 
-```python tag: ["NB3_init_1"]
+```python tags= ["NB3_init_1"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -84,7 +84,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 Het volume met de 'oude' randvoorwaarden. Dit zijn niet de randvoorwaarden van het vorige werkblad, maar de randvoorwaarden die je eerder hebt gebruikt. Hierbij botsen de deeltjes elastisch met de wanden van het volume. 
 
-```python tag: ["NB3_init_2"]
+```python tags= ["NB3_init_2"]
 def box_collision(particle: ParticleClass):
     ''' botsing met harde wanden '''
     if abs(particle.r[0]) + particle.R > BOX_SIZE_0/2: 
@@ -97,7 +97,7 @@ def box_collision(particle: ParticleClass):
 
 Het uitvoeren en samennemen van deze functies over een lijst met deeltjes:
 
-```python tag: ["NB3_init_3"]
+```python tags= ["NB3_init_3"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     particles.clear()
@@ -179,9 +179,7 @@ plt.show()
 
 ## Temperatuur
 
-Het boek behandelt de microscopische formules helemaal niet, maar de thermische energie van een gas is niets anders dan de statistisch gemiddelde kinetische energie van de deeltjes waaruit het gas bestaat.
-Nu is er van alles te zeggen over deze statistiek, maar voor nu gaan we daar even aan voorbij.
-Dat is onderwerp van het volgende werkblad.
+Het boek behandelt de microscopische formules helemaal niet, maar de thermische energie van een gas is niets anders dan de statistisch gemiddelde kinetische energie van de deeltjes waaruit het gas bestaat. Nu is er van alles te zeggen over deze statistiek, maar voor nu gaan we daar even aan voorbij. Dat is onderwerp van het volgende werkblad.
 
 De temperatuur wordt gegeven door:
 
