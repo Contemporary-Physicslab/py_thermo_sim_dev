@@ -23,7 +23,7 @@ Bij het maken van deze module kun je de Feynman lectures on Physics erg goed geb
 
 Eerst roepen we de juiste pakketten van Python aan en bepalen we de waardes van de constanten van onze simulatie.
 
-```python
+```python ["NB3_init_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -37,7 +37,7 @@ DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 
 De klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
 
-```python tags= ["NB3_init_1"]
+```python tags= ["NB3_init_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -84,7 +84,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 Het volume met de 'oude' randvoorwaarden. Dit zijn niet de randvoorwaarden van het vorige werkblad, maar de randvoorwaarden die je eerder hebt gebruikt. Hierbij botsen de deeltjes elastisch met de wanden van het volume. 
 
-```python tags= ["NB3_init_2"]
+```python tags= ["NB3_init_3"]
 def box_collision(particle: ParticleClass):
     ''' botsing met harde wanden '''
     if abs(particle.r[0]) + particle.R > BOX_SIZE_0/2: 
@@ -97,7 +97,7 @@ def box_collision(particle: ParticleClass):
 
 Het uitvoeren en samennemen van deze functies over een lijst met deeltjes:
 
-```python tags= ["NB3_init_3"]
+```python tags= ["NB3_init_4"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     particles.clear()
