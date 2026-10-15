@@ -1,18 +1,4 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.19.6
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
----
-
-# De Maxwell-Boltzmann snelheidsverdeling
+#  NB 4: De Maxwell-Boltzmann snelheidsverdeling
 
 ## Doelen
 We hebben al gezien in het vorige werkblad dat de snelheid van de deeltjes en de temperatuur aan elkaar gerelateerd zijn. In dit werkblad gaan we dat verder bekijken.
