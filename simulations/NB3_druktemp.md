@@ -1,28 +1,13 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.19.5
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
----
-
 # NB 3: Druk, temperatuur en energie
 
 ## Doelen
 
-Om het gedrag van een gas beter te begrijpen moeten we de microscopische eigenschappen van ons model (zoals massa, snelheid, impuls en energie per deeltje) nu verbinden aan de macroscopische eigenschappen van het systeem (zoals druk en temperatuur).
-We gaan ons model dus uitbreiden met code om deze macroscopische eigenschappen te berekenen.
+Om het gedrag van een gas beter te begrijpen moeten we de microscopische eigenschappen van ons model (zoals massa, snelheid, impuls en energie per deeltje) nu verbinden aan de macroscopische eigenschappen van het systeem (zoals druk en temperatuur). We gaan ons model dus uitbreiden met code om deze macroscopische eigenschappen te berekenen.
 
 Eerst nemen we alle delen over van de code die we opnieuw moeten gebruiken:
 - class voor particles
 - functies voor detecteren botsingen
-- (toelichten van een snellere manier van programmeren).
+- toelichten van een snellere manier voor de simululatie.
 
 Daarna voegen we de code toe voor de nieuwe macroscopische eigenschappen:
 - een functie schrijven voor de temperatuur
@@ -31,40 +16,23 @@ Daarna voegen we de code toe voor de nieuwe macroscopische eigenschappen:
 En dan maken we een simulatie, controleren we de resultaten en verbeteren we eventueel de code. 
 
 ## Externe bronnen
-Bij het maken van deze module kun je de Feynman lectures on Physics erg goed gebruiken.
-We bevelen aan:
+Bij het maken van deze module kun je de Feynman lectures on Physics erg goed gebruiken. We bevelen aan:
 - [The Kinetic Theory of Gases](https://www.feynmanlectures.caltech.edu/I_39.html) voor het afleiden van de druk, en het botsingsmodel.
-
-
 
 ## Laden van alle code die we al ontwikkeld hebben
 
 Eerst roepen we de juiste pakketten van Python aan en bepalen we de waardes van de constanten van onze simulatie.
 
-```{exercise}
-Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over.
-```
-
 ```python
-# ruimte voor uitwerking
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-BOX_SIZE_0 = 0               # Hoogte en lengte startvolume
-N = 40                       # Aantal deeltjes
-V_0 = 0                      # Startsnelheid van deeltjes
-RADIUS = 0                   # Straal van moleculen
-DT = 0                       # Tijdstap om geen botsing te missen
-
-### begin-solution
 BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 1                        # Startsnelheid van deeltjes
 RADIUS = 0.3 # pas aan         # Straal van moleculen
 DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
-### end-solution
 ```
 
 De klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
@@ -164,14 +132,31 @@ def take_time_step(particles):
 
 ```
 
+Laten we controleren of de deeltjes gemaakt zijn en of ze allemaal een snelheid hebben:
+
+```python
+particles = []
+create_particles(particles)
+
+plt.figure()
+plt.xlabel('x')
+plt.ylabel('y')
+plt.gca().set_aspect('equal')
+plt.xlim(-BOX_SIZE_0/2, BOX_SIZE_0/2)
+plt.ylim(-BOX_SIZE_0/2, BOX_SIZE_0/2)
+for p in particles:
+    plt.plot(p.r[0], p.r[1], 'k.', ms=25)
+    plt.arrow(p.r[0], p.r[1], p.v[0], p.v[1], 
+              head_width=0.05, head_length=0.1, color='red')
+plt.show()
+```
+
 ## Het draaien van een eerste simulatie ter controle
 
 Laten we het eerst zo eenvoudig mogelijk maken en controleren of het lukt om honderd tijdstappen te zetten met de hierboven gedefinieerde functies. 
 Als resultaat beperken we ons tot het plotten van de posities van de deeltjes en hun snelheden.
 
 ```python
-particles = []
-create_particles(particles)
 
 # doorlopen van de simulatie
 for i in range(100):
@@ -218,7 +203,7 @@ Hierbij is
 Schrijf een functie die de temperatuur van het gas in onze simulatie bepaalt:
 ```
 
-```python
+```python tags=["NB3_tempfun"]
 def temperature(particles) -> float:
     temp = 0.0 
     ### begin-solution

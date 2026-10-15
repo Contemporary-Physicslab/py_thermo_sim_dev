@@ -9,8 +9,14 @@ from NB1 import (
     check_eindantwoord,
 )
 
-from NB2 import check_brownian_distance_histogram_solution
+from NB2 import (
+    check_brownian_distance_histogram_solution,
+)
 
+
+from NB3 import (
+    check_tempfun,
+)
 
 def get_tagged_cell(notebook_path, tag):
     nb = jupytext.read(notebook_path)
@@ -54,6 +60,7 @@ def check_cell(notebook_path, name, test_function, variable=None):
 notebook_file_paths = {
     "NB1": "simulations/NB1_deeltjesmodel.md",
     "NB2": "simulations/NB2_brownianmotion.md",
+    "NB3": "simulations/NB3_druktemp.md",
 }
 
 # NB1 checks remain unchanged
@@ -66,15 +73,17 @@ NB1_cell_checks = [
 
 # Only check exercise 15 for NB2
 NB2_cell_checks = [
-    (
-        "NB2_brownian_distance_histogram",
-        check_brownian_distance_histogram_solution,
-    ),
+    ("NB2_brownian_distance_histogram", check_brownian_distance_histogram_solution),
+]
+
+NB3_cell_checks = [
+    ("NB3_tempfun", check_tempfun),
 ]
 
 cell_checks = {
     "NB1": NB1_cell_checks,
     "NB2": NB2_cell_checks,
+    "NB3": NB3_cell_checks,
 }
 
 # Run all checks
