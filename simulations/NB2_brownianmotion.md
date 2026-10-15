@@ -1,4 +1,4 @@
-# Brownian motion
+# NB 2: Brownian motion
 
 ```python
 import numpy as np
