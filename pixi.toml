@@ -25,5 +25,5 @@ jupyterlab = ">=4.6.3,<5"
 mystmd = ">=1.10.1,<2"
 
 [environments]
+default = { features = ["development"] }
 ci = []
-development = ["development"]
