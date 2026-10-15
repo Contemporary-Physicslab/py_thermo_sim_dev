@@ -23,7 +23,7 @@ Bij het maken van deze module kun je de Feynman lectures on Physics erg goed geb
 
 Eerst roepen we de juiste pakketten van Python aan en bepalen we de waardes van de constanten van onze simulatie.
 
-```python ["NB3_init_1"]
+```python tags= ["NB3_init_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
