@@ -1,6 +1,10 @@
 from pathlib import Path
 import numpy as np
 import jupytext
+import matplotlib
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
 
 from NB1 import (
     check_doorlopende_doos,
@@ -16,6 +20,7 @@ from NB2 import (
 
 from NB3 import (
     check_tempfun,
+    check_const_temp,
 )
 
 def get_tagged_cell(notebook_path, tag):
@@ -34,17 +39,71 @@ def get_tagged_cell(notebook_path, tag):
 results = []
 
 
-def check_cell(notebook_path, name, test_function, variable=None):
+def check_cell(
+    notebook_path,
+    name,
+    test_function,
+    mode="function",
+    variable=None,
+    init_tags=None,
+):
     try:
+        # Shared namespace for all cells in this check
+        namespace = {
+            "np": np,
+            "dt": 0.1,
+            "plt": plt,
+        }
+
+        # Execute initialization cells first
+        for tag in (init_tags or []):
+            init_source = get_tagged_cell(notebook_path, tag)
+            exec(init_source, namespace)
+
+        # Read the actual exercise cell
         source = get_tagged_cell(notebook_path, name)
 
-        if variable is None:
-            # Exercise 15 checks the source code directly.
+        if mode == "source":
             student_object = source
+
         else:
-            namespace = {"np": np, "dt": 0.1}
+            # Execute exercise cell in the SAME namespace
             exec(source, namespace)
-            student_object = namespace[variable]
+
+            if mode == "variable":
+                student_object = namespace[variable]
+
+            elif mode == "function":
+                # Find functions/classes defined by the exercise cell,
+                # not functions from the initialization cells
+                import ast
+
+                tree = ast.parse(source)
+
+                defined_names = [
+                    node.name
+                    for node in tree.body
+                    if isinstance(
+                        node,
+                        (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+                    )
+                ]
+
+                objects = [
+                    namespace[name]
+                    for name in defined_names
+                    if callable(namespace.get(name))
+                ]
+
+                if len(objects) != 1:
+                    raise ValueError(
+                        f"Expected one function or class, found {len(objects)}."
+                    )
+
+                student_object = objects[0]
+
+            else:
+                raise ValueError(f"Unknown check mode: {mode}")
 
         test_function(student_object)
 
@@ -63,21 +122,22 @@ notebook_file_paths = {
     "NB3": "simulations/NB3_druktemp.md",
 }
 
-# NB1 checks remain unchanged
 NB1_cell_checks = [
-    ("NB1_doorlopendedoos", check_doorlopende_doos),
-    ("NB1_hardewand", check_harde_wanden),
-    ("NB1_botsingsvoorwaarde", check_botsingsvoorwaarde),
-    ("NB1_eindantwoord", check_eindantwoord, "num_botsingen"),
+    ("NB1_doorlopendedoos", check_doorlopende_doos, "function", None, []),
+    ("NB1_hardewand", check_harde_wanden, "function", None, []),
+    ("NB1_botsingsvoorwaarde", check_botsingsvoorwaarde, "function", None, []),
+    ("NB1_eindantwoord", check_eindantwoord, "variable", "num_botsingen", []),
 ]
 
-# Only check exercise 15 for NB2
 NB2_cell_checks = [
-    ("NB2_brownian_distance_histogram", check_brownian_distance_histogram_solution),
+    ("NB2_brownian_distance_histogram",
+     check_brownian_distance_histogram_solution, "source", None, []),
 ]
 
 NB3_cell_checks = [
-    ("NB3_tempfun", check_tempfun),
+    ("NB3_tempfun", check_tempfun, "function", None),
+    ("NB3_check_const_temp", check_const_temp, "variable", "temperatures",
+        ["NB3_init_1", "NB3_init_2", "NB3_init_3", "NB3_tempfun", ],),
 ]
 
 cell_checks = {
@@ -87,9 +147,15 @@ cell_checks = {
 }
 
 # Run all checks
-for notebook, path in notebook_file_paths.items():
-    for name, test_function, *args in cell_checks[notebook]:
-        check_cell(path, name, test_function, *args)
+for name, test_function, mode, variable, init_tags in cell_checks[notebook]:
+    check_cell(
+        path,
+        name,
+        test_function,
+        mode=mode,
+        variable=variable,
+        init_tags=init_tags,
+    )
 
 
 # Generate Markdown report

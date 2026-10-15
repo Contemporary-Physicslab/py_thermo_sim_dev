@@ -1,0 +1,49 @@
+
+name: Sync Python Checks
+
+on:
+  push:
+    tags:
+      - 'py_check_update*'
+
+jobs:
+  sync-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repo_dev op de getriggerde tag
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+
+      # Checkout repo2
+      - name: Checkout destination repository
+        uses: actions/checkout@v4
+        with:
+          repository: FreekPols/JB-workflows
+          token: ${{ secrets.JBWF_PAT }}
+          path: destination
+          ref: main
+
+      # Kopieer alleen .py files uit de root
+      - name: Copy Python files
+        run: |
+          mkdir -p destination/scripts
+
+          find . -maxdepth 1 -type f -name '*.py' \
+            -exec cp -v {} destination/scripts/ \;
+
+      # Commit en push naar repo2
+      - name: Commit and push
+        working-directory: destination
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add scripts/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync Python checks from repo_dev"
+            git push origin main
+          fi
