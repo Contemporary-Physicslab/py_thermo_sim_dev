@@ -201,7 +201,7 @@ Hierbij is
 Schrijf een functie die de temperatuur van het gas in onze simulatie bepaalt:
 ```
 
-```python tags=[]
+```python tags=["NB3_tempfun"]
 def temperature(particles) -> float:
     temp = 0.0 
     ### begin-solution
@@ -217,7 +217,7 @@ def temperature(particles) -> float:
 
 Gebruik deze functie om een simulatie te maken waarin je de temperatuur als functie van de tijdstap voor 100 tijdstappen plot.
 ```
-
+ 
 ```python tags=["NB3_check_const_temp"]
 # ruimte voor uitwerking
 
