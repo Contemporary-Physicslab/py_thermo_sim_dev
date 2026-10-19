@@ -23,7 +23,7 @@ Bij het maken van deze module kun je de Feynman lectures on Physics erg goed geb
 
 Eerst roepen we de juiste pakketten van Python aan en bepalen we de waardes van de constanten van onze simulatie.
 
-```python tags= ["NB3_init_1"]
+```python tags=["NB3_init_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -37,7 +37,7 @@ DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 
 De klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
 
-```python tags= ["NB3_init_2"]
+```python tags=["NB3_init_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -84,7 +84,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 Het volume met de 'oude' randvoorwaarden. Dit zijn niet de randvoorwaarden van het vorige werkblad, maar de randvoorwaarden die je eerder hebt gebruikt. Hierbij botsen de deeltjes elastisch met de wanden van het volume. 
 
-```python tags= ["NB3_init_3"]
+```python tags=["NB3_init_3"]
 def box_collision(particle: ParticleClass):
     ''' botsing met harde wanden '''
     if abs(particle.r[0]) + particle.R > BOX_SIZE_0/2: 
@@ -97,7 +97,7 @@ def box_collision(particle: ParticleClass):
 
 Het uitvoeren en samennemen van deze functies over een lijst met deeltjes:
 
-```python tags= ["NB3_init_4"]
+```python tags=["NB3_init_4"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     particles.clear()
@@ -148,15 +148,19 @@ for p in particles:
     plt.plot(p.r[0], p.r[1], 'k.', ms=25)
     plt.arrow(p.r[0], p.r[1], p.v[0], p.v[1], 
               head_width=0.05, head_length=0.1, color='red')
+plt.plot(particles[0].r[0],particles[0].r[1], 'r.', ms=25)
 plt.show()
 ```
+
+We hebben het eerste deeltje rood gemaakt zodat je daadwerkelijk kunt zien dat deze beweegt.
+
 
 ## Het draaien van een eerste simulatie ter controle
 
 Laten we het eerst zo eenvoudig mogelijk maken en controleren of het lukt om honderd tijdstappen te zetten met de hierboven gedefinieerde functies. 
 Als resultaat beperken we ons tot het plotten van de posities van de deeltjes en hun snelheden.
 
-```python
+```python tags=[]
 
 # doorlopen van de simulatie
 for i in range(100):
@@ -174,6 +178,7 @@ for p in particles:
     plt.plot(p.r[0], p.r[1], 'k.', ms=25)
     plt.arrow(p.r[0], p.r[1], p.v[0], p.v[1], 
               head_width=0.05, head_length=0.1, color='red')
+plt.plot(particles[0].r[0],particles[0].r[1], 'r.', ms=25)
 plt.show()
 ```
 
@@ -204,11 +209,11 @@ Schrijf een functie die de temperatuur van het gas in onze simulatie bepaalt:
 ```python tags=["NB3_tempfun"]
 def temperature(particles) -> float:
     temp = 0.0 
-    ### begin-solution
+    ###begin-solution
     for p in particles:
         temp += p.kin_energy
     temp = temp / len(particles)
-    ### end-solution
+    ###end-solution
     return temp
 ```
 
@@ -217,7 +222,7 @@ def temperature(particles) -> float:
 
 Gebruik deze functie om een simulatie te maken waarin je de temperatuur als functie van de tijdstap voor 100 tijdstappen plot.
 ```
- 
+
 ```python tags=["NB3_check_const_temp"]
 # ruimte voor uitwerking
 
@@ -229,19 +234,19 @@ create_particles(particles)
 for i in range(100):
     take_time_step(particles)
     # vastleggen van temperatuur per tijdstap
-    ### begin-solution
+    ###begin-solution
     temperatures[i] = temperature(particles)
-    ### end-solution
+    ###end-solution
 
 plt.figure()
 plt.xlabel('Time')
 plt.ylabel('Temperature')
 # plotten van tijd tegen temperatuur
-### begin-solution
+###begin-solution
 times = times * 2.5
 temperatures = np.asarray(temperatures) * 30 * 1.7E-27 * (1E-9 / 2.5E-12)**2 / 1.38E-23
 plt.plot(times, temperatures, '-r')
-### end-solution
+###end-solution
 plt.show()
 ```
 
@@ -295,10 +300,10 @@ pressure = 0.0
 
 def top_down_collision(particle: ParticleClass):
     global impulse_outward
-    if abs(particle.r[1]) + particle.R > BOX_SIZE_0 / 2:
-        particle.r[1] = np.sign(particle.r[1]) * (BOX_SIZE_0/2 - particle.R)
-        impulse_outward += abs(particle.momentum[1]) * 2
-        particle.v[1] *= -1
+    if abs(particle.r[1]) + particle.R > BOX_SIZE_0 / 2:                       # bepaal of deeltje buiten de doos is
+        particle.r[1] = np.sign(particle.r[1]) * (BOX_SIZE_0/2 - particle.R)   # zet deeltje terug in de doos
+        impulse_outward += abs(particle.momentum[1]) * 2                       # impuls = 2x momentum
+        particle.v[1] *= -1                                                    # spiegel de snelheid
     
 def left_right_collision(particle: ParticleClass):
     global impulse_outward
@@ -328,10 +333,47 @@ Wat zou je als verklaring hiervoor geven?
 
 
 
-```python
-# Geef je oplossing
+```python tags=["NB3_plot_pres"]
+particles = []
+pressures = np.zeros(100, dtype=float)
+times = np.linspace(1, 100, 100)
 
-### begin-solution
+###begin-solution
+create_particles(particles)
+for i in range(100):
+    take_time_step(particles)
+    pressures[i] = pressure
+###end-solution
+
+plt.figure()
+plt.xlabel('Time [step]')
+plt.ylabel('Pressure [a.u.]')
+
+plt.plot(times, pressures, '-r')
+
+plt.show()
+
+```
+
+## Verbeteren van code: middelen
+
+De grafiek voor de druk bestaat uit een achtergrond op de waarde 0 en daarop een serie scherpe pieken.
+Een piek komt overeen met een tijdstap waar er toevallig een atoom met de wanden botst.
+Om deze grafiek meer constant te maken kunnen we het aantal deeltjes sterk verhogen door een veel groter volume te modelleren, maar dat kost ons veel meer rekenkracht.
+
+```{exercise}
+:label: ex-druktemp-5
+Probeer bovenstaande simulatie uit te voeren met 400 deeltjes, vergeet niet je volume ook aan te passen (wat zou anders het gevolg zijn).
+
+Klaar?
+Zet je initiële waarden weer terug.
+```
+
+```python
+###begin-solution
+BOX_SIZE_0 = 10*10**.5                
+N = 40*10                        
+
 particles = []
 pressures = np.zeros(100, dtype=float)
 times = np.linspace(1, 100, 100)
@@ -348,21 +390,11 @@ plt.ylabel('Pressure [a.u.]')
 plt.plot(times, pressures, '-r')
 
 plt.show()
-### end-solution
-```
 
-## Verbeteren van code: middelen
+BOX_SIZE_0 = 10
+N = 40  
+###end-solution
 
-De grafiek voor de druk bestaat uit een achtergrond op de waarde 0 en daarop een serie scherpe pieken.
-Een piek komt overeen met een tijdstap waar er toevallig een atoom met de wanden botst.
-Om deze grafiek meer constant te maken kunnen we het aantal deeltjes sterk verhogen door een veel groter volume te modelleren, maar dat kost ons veel meer rekenkracht.
-
-```{exercise}
-:label: ex-druktemp-5
-Probeer bovenstaande simulatie uit te voeren met 400 deeltjes, vergeet niet je volume ook aan te passen (wat zou anders het gevolg zijn).
-
-Klaar?
-Zet je initiële waarden weer terug.
 ```
 
 Een goedkoper alternatief bestaat uit het middelen van de druk over de tijd.
@@ -402,15 +434,17 @@ Kopieer nu je code voor de simulatie waarin je de druk als functie van de tijd h
 ```
 
 ```python
-# RUIMTE VOOR GEKOPIEERDE FUNCTIE
-
-### begin-solution
 particles = []
-pressures = np.zeros(100, dtype=float)
-times = np.linspace(1, 100, 100)
+N_steps = 500 
+pressures = np.zeros(N_steps, dtype=float)
+
+times = np.linspace(1, N_steps, N_steps)
 
 create_particles(particles)
-for i in range(100):
+
+###begin-solution
+
+for i in range(N_steps):
     take_time_step(particles)
     pressures[i] = pressure
 
@@ -422,24 +456,25 @@ times *= 2.5
 plt.plot(times, pressures, '-r')
 
 plt.show()
-### end-solution
+###end-solution
 
 ```
 
-Met de middeling kan je beter zien wat de gemiddelde waarde voor de druk in dit systeem is. Als dit voor jouw simulatie lastig is kan je de factor `alpha` aanpassen in de functie 'handle_walls`, zodat je over een langere periode het gemiddelde neemt. Hou daarbij wel rekening met de eis in [bovenstaande formule](int_norm)
+Met de middeling kun je beter zien wat de gemiddelde waarde voor de druk in dit systeem is. Als dit voor jouw simulatie lastig is kan je de factor `alpha` aanpassen in de functie 'handle_walls`, zodat je over een langere periode het gemiddelde neemt. Hou daarbij wel rekening met de eis in [bovenstaande formule](int_norm)
 
 ```{exercise}
 :label: ex-druktemp-7
-We kunnen de gevonden druk nu wel uitdrukken in SI-eenheden met behulp van de voorfactoren die we voor de constanten hebben gevonden, maar daar komt niet de 10 bar uit van de fietsband die we wilden modelleren. Kan je verklaren waardoor dit komt?
+We kunnen de gevonden druk nu wel uitdrukken in SI-eenheden met behulp van de voorfactoren die we voor de constanten hebben gevonden, maar daar komt niet de 10 bar uit van de fietsband die we wilden modelleren. Verklaar waardoor dit komt.
 ```
 
 ```{solution} ex-druktemp-7
-### begin-solution
+###begin-solution
 Met de verandering in het aantal ruimtelijke dimensies verandert ook de eenheid van druk, in plaats van $\mathrm{N/m}^2$ wordt de eenheid $\mathrm{N/m}$.
 Omdat $\mathrm{N=kg m / s}^2$ valt de de eenheid $\mathrm{m}$ er tussenuit.
 Daarmee verander je de fysica fundamenteel. 
-### end-solution
+###end-solution
 ```
+
 
 ```{exercise}
 :label: ex-druktemp-8
@@ -449,10 +484,11 @@ Leg op basis van de vormen die je ziet en de bijbehorende wiskunde uit dat dit e
 ```
 
 ```{solution} ex-druktemp-8
-### begin-solution
+###begin-solution
 De druk in elke volgende tijdstap is evenredig met de druk in de voorafgaande. Als er dus geen botsing met de wand plaatsvindt, zal de druk hierdoor exponentieel afnemen met de tijd. Dit is duidelijk in de grafiek te zien bij kleinere aantallen deeltjes.
-### end-solution
+###end-solution
 ```
+
 
 Om te voorspellen welke waarde de druk hier dan wel krijgt, moeten we de formule verder ontwikkelen. We hebben al gezien dat de druk ten gevolge van de stoot op de wand werd gegeven door:
 
@@ -463,7 +499,7 @@ $$
 We moeten dit natuurlijk over alle deeltjes sommeren, maar ook bepalen hoe vaak een deeltje in de tijd meedoet. De $\Delta t$ in bovenstaande formule wordt dan de tijd tussen twee botsingen voor een enkel deeltje (=$2l/v_x$). Dan is de druk voor alle deeltjes samen:
 
 $$
-    \left< P \right> = \sum_{i=1}^{N} \frac{2mv_{x,i}}{l (2l/v_{x,i})} = \frac{m}{l^2} \sum_{i=1}^{N} v_{x,i}^2 = \frac{mN}{A} \left< v_x^2\right>
+    \left< P \right> = \sum_{i=1}^N \frac{2m_iv_{x,i}}{l\Delta t} = \sum_{i=1}^{N} \frac{2mv_{x,i}}{l (2l/v_{x,i})} = \frac{m}{l^2} \sum_{i=1}^{N} v_{x,i}^2 = \frac{mN}{A} \left< v_x^2\right>
 $$
 
 Omdat het systeem geen voorkeur heeft voor snelheden in de $x$ of de $y$-richting kunnen we stellen dat $\left< v_x^2 \right> = \left< v_y^2 \right> $, zodat in twee dimensies geldt dat $\left< v_x^2 \right> = \frac{1}{2} \left< v^2 \right>$. Daarmee moet de waarde voor de druk dus gelijk zijn aan:
@@ -472,12 +508,20 @@ $$
     \left< P \right> = \frac{mN}{A} \frac{\left< v^2\right>}{2}
 $$ (2d_pressure)
 
+
 ```{exercise} 
 :label: ex-druktemp9a
 
 Controleer of je uitkomst overeenkomt met de theorie en verifieer hiermee de code.
 ```
 
+```python
+###begin-solution
+print(np.mean(pressures))
+
+print(particles[0].m*N/BOX_SIZE_0**2 *1/2)
+###end-solution
+```
 
 In [de formule voor de tweedimensionale druk](2d_pressure) kan je de structuur van de ideale gaswet herkennen. 
 
@@ -487,17 +531,18 @@ In [de formule voor de tweedimensionale druk](2d_pressure) kan je de structuur v
 Herleid dezelfde formule af voor het driedimensionale geval. Laat zien welke relatie er geldt tussen de constanten voor het macroscopische (thermodynamische) model en het microscopische (mechanische) model.
 ```
 
+
 ```{solution} ex-druktemp9b
 Geef hier de relatie tussen de constanten...
-### begin-solution
+###begin-solution
 In dat geval geldt dat $P=\frac{\Delta p}{A\Delta t}$, zodat we uitkomen op $\left< P \right> = \frac{mN}{l^3} \left< v_x^2\right> = \frac{mN}{V} \frac{\left< v^2\right>}{3}$ (Pythagoras in 3 dimensies). Voor drie dimensies geldt daarnaast dat $\frac{3}{2}kT=\frac{1}{2}m\left<v^2\right>$, zodat $P=\frac{NkT}{V}$. We kunnen dus concluderen dat $R=\frac{N}{n}k$ zodat de verhouding tussen de gasconstante en de constante van Boltzmann precies het getal van Avogadro is. 
-### end-solution
+###end-solution
 ```
 
 
 ```{exercise}
 :label: ex-druktemp-12
-Laat je werk aftekenen door een TA en besluit of je eventueel wil doorgaan met de verdiepende opdracht voor een 'excellent' op dit onderdeel.
+Push je werk naar GitHub, en merge een van de twee branches naar main. Ga je voor excellent? Doe dan eerst onderstaande opdracht ook.
 ```
 
 
@@ -511,6 +556,98 @@ Je ziet dat de druk een statistisch bepaalde grootheid is die met de tijd variee
 - Verhoog het aantal deeltjes met een factor twee en herhaal je berekening.
 - Schat hieruit de statistische variatie in de druk bij een volume met $10^{23}$ deeltjes.
 
+
+```python
+
+```
+
+```python
+###begin-solution
+plt.figure()
+plt.hist(pressures)
+plt.xlabel("Pressure")
+plt.ylabel("Frequency")
+plt.show()
+###end-solution
+```
+
+```python
+
+def meet_druk(N_nieuw, aantal_stappen=20000):
+    global N, pressure
+
+    N = N_nieuw
+    pressure = 0.0
+
+    particles = []
+    create_particles(particles)
+
+    drukken = np.zeros(aantal_stappen)
+
+    for i in range(aantal_stappen):
+        take_time_step(particles)
+        drukken[i] = pressure
+
+    return drukken
+
+
+# Simulaties voor N = 40 en N = 80
+druk_40 = meet_druk(40)
+druk_80 = meet_druk(80)
+
+# Eerste 2000 stappen weglaten (opstartfase)
+druk_40 = druk_40[2000:]
+druk_80 = druk_80[2000:]
+
+# Gemiddelde en standaardafwijking
+gem_40 = np.mean(druk_40)
+gem_80 = np.mean(druk_80)
+
+std_40 = np.std(druk_40)
+std_80 = np.std(druk_80)
+
+# Relatieve fluctuaties
+rel_40 = std_40 / gem_40
+rel_80 = std_80 / gem_80
+
+print("N = 40")
+print("Gemiddelde druk:", gem_40)
+print("Standaardafwijking:", std_40)
+print("Relatieve fluctuatie:", rel_40)
+
+print("\nN = 80")
+print("Gemiddelde druk:", gem_80)
+print("Standaardafwijking:", std_80)
+print("Relatieve fluctuatie:", rel_80)
+
+# Histogrammen van de relatieve druk
+plt.figure(figsize=(9, 5))
+
+plt.hist(druk_40 / gem_40, bins=40,
+         density=True, alpha=0.5, label="N = 40")
+plt.hist(druk_80 / gem_80, bins=40,
+         density=True, alpha=0.5, label="N = 80")
+
+plt.xlabel("Druk / gemiddelde druk")
+plt.ylabel("Kansdichtheid")
+plt.title("Statistische fluctuaties van de druk")
+plt.legend()
+plt.show()
+
+# Vergelijking van de fluctuaties
+print("\nVerhouding relatieve fluctuaties:",  rel_80 / rel_40)
+
+# Extrapolatie naar 10^23 deeltjes
+N_groot = 1e23
+
+rel_groot = rel_40 * np.sqrt(40 / N_groot)
+
+print("Geschatte relatieve fluctuatie bij 10^23 deeltjes:",  rel_groot)
+
+# Oorspronkelijke waarde herstellen
+N = 40
+
+```
 
 ```python
 

@@ -49,14 +49,14 @@ V_PISTON_0 = -0.1 * V_0      # Startsnelheid van zuiger
 k_B = 1.38E-23
 # (negatief betekent zowel links als rechts naar binnen gericht)
 
-### begin-solution
+###begin-solution
 BOX_SIZE_0 = 1E-8              # Hoogte en breedte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 400                      # Startsnelheid van deeltjes
 RADIUS = 3E-10                 # Straal van moleculen
 DT = 7.5E-14                   # Tijdstap om geen botsing te missen 0.1 * RADIUS / V_0
 V_PISTON_0 = -40               # Startsnelheid van zuiger 
-### end-solution
+###end-solution
 ```
 
 De klasse voor het gasmolecuul met de interacties:
@@ -146,11 +146,11 @@ def create_particles(particles):
 def temperature(particles) -> float:
     temp = 0.0
 
-    ### begin-solution
+    ###begin-solution
     for p in particles:
         temp += p.kin_energy
     temp = 28 * 1.7E-27 * temp / (len(particles) * k_B)
-    ### end-solution
+    ###end-solution
 
     return temp
         
@@ -379,7 +379,7 @@ print(a_init)
 def power_law(vol, a, n):
     return a * vol**n    
 
-### begin-solution
+###begin-solution
 popt, pocv = curve_fit(power_law, volumes[20:], pressures[20:], p0=(a_init, -n_init)) #, maxfev = 12000)
 print(popt)
 x_fit = volumes
@@ -393,7 +393,7 @@ plt.plot(volumes[20:], pressures[20:], 'bo', label='simulation')
 plt.plot(x_fit, y_fit, 'r-', label='power law with n = ' + str(popt[1]))
 
 plt.legend()
-### end-solution
+###end-solution
 
 ```
 
@@ -406,11 +406,11 @@ Verklaar dat de temperatuur nooit helemaal terugkeert naar de beginwaarde vanuit
 ```
 
 ```{solution} ex-thermostat-05
-### begin-solution
+###begin-solution
 De hoeveelheid warmte die per tijdseenheid wordt verwijderd uit het beheersvolume is evenredig met de verhouding tussen de temperatuur van het beheersvolume en de gewenste temperatuur.
 Er is een bepaalde temperatuur waarvoor dit vermogen precies overeenkomt met het vermogen dat de zuiger uitoefent op het gas.
 Voor lagere zuigersnelheden is dit vermogen lager, maar het wordt nooit nul. 
-### end-solution
+###end-solution
 ```
 
 Als je goed kijkt zie je dat de temperatuur voor kleinere volumes een steeds grotere afwijking vertoont. 
@@ -421,11 +421,11 @@ Als je ervan uit kan gaan dat de afvoer van warmte evenredig is met het verschil
 ```
 
 ```{solution} ex-thermostat-06
-### begin-solution
+###begin-solution
 Voor kleinere volumes neemt de druk toe (idealiter omgekeerd evenredig met het volume).
 Dat betekent dat de arbeid per afgelegde afstand ook toeneemt.
 De temperatuur van het beheersvolume gaat dus omhoog om het uitgaand vermogen evenveel te laten toenemen.
-### end-solution
+###end-solution
 ```
 
 
@@ -442,7 +442,7 @@ Om het jezelf makkelijker te maken kun je de verschillende grootheden onafhankel
 ```
 
 ```python
-### begin-solution
+###begin-solution
 plt.figure()
 plt.xlabel('Volume [m$^{2}$]')
 plt.ylabel('Energy [J]')
@@ -455,7 +455,7 @@ energies = int(N) * k_B * temperatures + 28 * 1.7E-27 * (works - heats)
 plt.plot(volumes, energies, '-g')
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 In het boek wordt uitgelegd dat er maar twee vormen van energieoverdracht zijn van een systeem naar de omgeving. Dit kan via warmteoverdracht of via arbeid.

@@ -43,14 +43,14 @@ V_PISTON_0 = -0.02 * V_0     # Startsnelheid van zuiger
 k_B = 1.38E-23
 # (negatief betekent zowel links als rechts naar binnen gericht)
 
-### begin-solution
+###begin-solution
 BOX_SIZE_0 = 1E-8              # Hoogte en breedte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 400                      # Startsnelheid van deeltjes
 RADIUS = 1E-10                 # Straal van moleculen
 DT = 7.5E-14                   # Tijdstap om geen botsing te missen 0.1 * RADIUS / V_0
 V_PISTON_0 = -8                # Startsnelheid van zuiger 
-### end-solution
+###end-solution
 ```
 
 En maken we daarnaast ook gebruik van een klasse die het gedrag van deeltjes omschrijft:
@@ -184,11 +184,11 @@ class ControlVolume:
     @property
     def temperature(self) -> float:
         temp = 0.0
-        ### begin-solution
+        ###begin-solution
         for p in self.particles:
             temp += p.kin_energy
         temp = 28 * 1.7E-27 * temp / (len(self.particles) * k_B)
-        ### end-solution
+        ###end-solution
         return temp   
 
     @property
@@ -289,12 +289,12 @@ Waarom is het (idealiter) toch een reversibel proces?
 ```
 
 ```{solution} ex-entropy-03
-### begin-solution
+###begin-solution
 Het is een reversibel proces zolang er geen entropieproductie plaatsvindt.
 Omdat $dS=\frac{dQ}{T}$, zal er bij een warmtestroom entropieproductie plaatsvinden, tenzij de temperatuur van de twee gebieden waartussen de warmte stroomt hetzelfde is.
 De toename van entropie aan de ene kant compenseert dan exact de afname in entropie aan de andere kant.
 Omdat de linker en rechter zuiger hier (idealiter) dezelfde temperatuur hebben, is dit precies het geval. 
-### end-solution
+###end-solution
 ```
 
 ```python
@@ -358,12 +358,12 @@ Leg daarna ook uit waarom deze toename in temperatuur steeds sneller gaat voor g
 ```
 
 ```{solution} ex-entropy-04
-### begin-solution
+###begin-solution
 De arbeid die de zuiger uitoefent op het gas wordt gegeven door $PdV$.
 Aan het begin is deze term in evenwicht, maar terwijl de linker zuiger kleiner wordt, neemt de druk omgekeerd evenredig toe met het volume.
 De toename van druk in de linker zuiger is dus veel groter dan de afname van druk in de rechter zuiger.
 Zodoende wordt de arbeid uitgeoefend op `cv1` snel groter dan de arbeid die `cv2` uitoefent op de zuiger. 
-### end-solution 
+###end-solution 
 ```
 
 ```{exercise} temperatuurverschil
@@ -373,11 +373,11 @@ Welke grootheid heeft de grootste invloed op dit verschil en waarom? (Verander d
 ``` 
 
 ```{solution} ex-entropy-05
-### begin-solution
+###begin-solution
 Dit verschil wordt bepaald door de verhouding van de snelheid van de zuiger en die van de deeltjes.
 Hoe groter de snelheid van de zuiger, hoe groter het vermogen ten gevolge van de arbeid.
 Er is dan een groter vermogen nodig om te koelen naar de evenwichtstemperatuur en dat ontstaat door een groter temperatuurverschil.
-### end-solution
+###end-solution
 ```
 
 
@@ -428,11 +428,11 @@ In de bovenstaande afleiding is gebruik gemaakt van de relatie $dU=-\delta W$. W
 ```
 
 ```{solution} ex-entropy-06
-### begin-solution
+###begin-solution
 Dit volgt uit de tweede hoofdwet.
 Nemen we als systeem de twee zuigers samen, dan is geen warmtecontact tussen het systeem van de twee zuigers en de omgeving.
 Dat er warmteuitwisseling plaatsvindt tussen de twee zuigers (binnen het systeem) is dan onbelangrijk.
-### end-solution
+###end-solution
 ```
 
 ```{exercise} theorie
@@ -442,7 +442,7 @@ Los de differentiaalvergelijking op en plot deze theoretische voorspelling voor 
 ```
 
 ```python
-### begin-solution
+###begin-solution
 x_vals = np.linspace(-0.8, 0.8, num_data*2)
 y_vals = (temperatures1[0] + temperatures2[0]) / (2 * np.sqrt(1 - x_vals**2))
 x_vals = x_vals * 1E-16 + 1E-16
@@ -457,7 +457,7 @@ plt.plot(x_vals, y_vals, '-r')
 plt.legend()
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 ```{exercise} theoretical_error
@@ -466,14 +466,14 @@ Zie je afwijkingen tussen de theorie en de simulatie? Bespreek deze en leg uit w
 ```
 
 ```{solution} ex-entropy-08
-### begin-solution
+###begin-solution
 Er zijn een aantal afwijkingen te noemen:
 
 1. De temperatuur van het linker en rechter compartiment is verschillend. Dat komt doordat de temperatuur altijd 'achterblijft' door de werking van de thermostaat. 
 2. De curve is steiler in de simulatie. Dit heeft te maken met het dode volume van de deeltjes.
 3. De curve heeft lichte fluctuaties door het beperkte aantal deeltjes, waardoor er statistische variatie optreedt. 
 
-### end-solution
+###end-solution
 ```
 
 Om te verifiëren dat dit proces reversibel is moeten we het proces ook terug kunnen uitvoeren. 
@@ -486,7 +486,7 @@ Beweeg de zuiger terug en controleer de reversibiliteit van het proces
 ```python
 # neem de vorige code tussen opgave 3 en 4 over en breidt deze uit. 
 
-### begin-solution
+###begin-solution
 num_data = round(abs(BOX_SIZE_0 * 0.4 / (DT * V_PISTON_0)))
 
 volumes1 = np.zeros(num_data, dtype=float)
@@ -529,7 +529,7 @@ ax2.plot(volumes1, temperatures1, '-b', label='cv2')
 ax2.legend()
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 ```{exercise} check reversibility
@@ -539,7 +539,7 @@ Je ziet dat het proces terug niet helemaal overeenkomt met dat op de heenweg. Be
 
 ```{solution} ex-entropy-10
 Hier jouw antwoord...
-### begin-solution
+###begin-solution
 Er zijn een aantal verschillen:
 
 1. Bij het omslagpunt van de zuiger is er een vertraging in de temperatuur. Dit leidt tot een maximum aan de rechter kant dat niet samenvalt met de rand van het domein. 
@@ -547,7 +547,7 @@ Er zijn een aantal verschillen:
 3. De eindtemperatuur is iets toegenomen ten opzichte van de start, omdat de thermostaat iets achter loopt, waardoor het proces niet perfect in equilibrium plaatsvond.
 
 De reversibiliteit van het probleem kan je verhogen door de snelheid van de zuiger te verlagen ten opzichte van de snelheid van de deeltjes, maar voor een perfecte run moet die verhouding oneindig zijn. Dat haal je dus nooit. 
-### end-solution
+###end-solution
 ```
 
 
@@ -562,9 +562,9 @@ Welke eindtemperatuur verwacht je na dit adiabatische proces voor de twee volume
 ```
 
 ```{solution} ex-entropy-11
-### begin-solution 
+###begin-solution 
 Voor dit twee-dimensionale gas verwacht je de eindtemperatuur voor het linker deel dan een temperatuur van $5 T_0$, waarbij $T_0$ de starttemperatuur. Voor het rechter deel is de eindtemperatuur $\frac{5}{9} T_0$.
-### end-solution 
+###end-solution 
 ```
 
 ```{exercise}
@@ -577,7 +577,7 @@ Je kan hiervoor het best starten vanuit de code voor het isotherme proces en dez
 # ruime voor uitwerking 
 # kopieer hier eerst de code voor de isotherme simulatie
 
-### begin-solution
+###begin-solution
 
 num_data = round(abs(BOX_SIZE_0 * 0.4 / (DT * V_PISTON_0)))
 
@@ -621,7 +621,7 @@ ax2.plot(volumes1, temperatures1, '-b', label='cv2')
 ax2.legend()
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 Na de adiabatische verplaatsing moeten de twee volumes alsnog in thermisch evenwicht gebracht worden. Dat doen we met de code hieronder. 
@@ -632,9 +632,9 @@ Wat is de theoretische eindtemperatuur $T_{\text{eq}}$ als we deze twee volumes 
 ```
 
 ```{solution} ex-entropy-13
-### begin-solution
+###begin-solution
 Dat is het gemiddelde van de twee: $\frac{25}{9} T_0$. De ruimtes hebben evenveel deeltjes, dus hun soortelijke warmte is gelijk. 
-### end-solution
+###end-solution
 ```
 
 ```python
@@ -678,14 +678,14 @@ Omschrijf dat proces en leg uit waarom je hierbij toch hetzelfde antwoord verwac
 ```
 
 ```{solution} ex-entropy-14
-### begin-solution
+###begin-solution
 De twee volumes staan helemaal niet in thermisch contact met elkaar.
 Dan zou elke hoeveelheid energie die aan het ene volume wordt onttrokken bij het andere volume moeten worden toegevoegd.
 Wat de code doet is de eindtemperatuur berekenen en vervolgens beide volumes in evenwicht brengen met de eindtemperatuur.
 Dat betekent dat er in de loop van het proces geen behoud van energie is, maar alleen bij het begin- en eindpunt. 
 Dat maakt niet uit omdat entropie een toestandsgrootheid is.
 Alleen begin- en eindpunt doen ertoe en *niet* het proces of de afgelegde route. 
-### end-solution
+###end-solution
 ```
 
 ```{exercise} responstijd
@@ -696,10 +696,10 @@ Hint: stel je hiervoor de stuiterende gasmoleculen voor.
 ```
 
 ```{solution} ex-entropy-15
-### begin-solution
+###begin-solution
 De deeltjes in het warme deelvolume gaan veel sneller en botsen daarom frequenter met de wand.
 Dit levert een sneller proces om in evenwicht te komen. 
-### end-solution
+###end-solution
 ```
 
 
@@ -730,7 +730,7 @@ Hint: kies je systeem voor elk proces zo dat er geen warmtecontact is naar de om
 ```
 
 ```{solution} ex-entropy-16
-### begin-solution
+###begin-solution
 Voor het isotherme proces kiezen we de beide volumes samen als het systeem. Dan is
 
 $$
@@ -749,7 +749,7 @@ $$
     \Delta W = \Delta U_{\text{irr}} - \Delta U_{\text{rev}} = \frac{32}{9} N k_B T_0 - \frac{4}{3} N k_B T_0 = \frac{20}{9} N k_B T_0 
 $$
 
-### end-solution
+###end-solution
 ```
 
 Een reversibele route is dan het 'goedkoopste' proces om in een toestand te komen. Voor het experiment zou het perfect uitgevoerde isotherme proces reversibel zijn en daarom de laagste temperatuur opleveren bij $x=-0.8$.
@@ -761,7 +761,7 @@ Bereken uit de theoretische, thermodynamische formules hoeveel entropie er vrijk
 
 ```{solution} ex-entropy-17
 Hier jouw antwoord...
-### begin-solution
+###begin-solution
 Vanuit toestand 0 naar toestand 2 wordt er geen entropie geproduceerd, omdat er geen warmtecontact is. Bij toestand 2 naar toestand 3 geldt:
 
 $$
@@ -770,7 +770,7 @@ $$
     = N k_B \ln{5/9} + N k_B \ln{25/5} = N k_B \ln {25/9}
 $$
 
-### end-solution
+###end-solution
 ```
 
 Willen we maximale arbeid halen in de stap van toestand 2 naar toestand 3, dan kunnen we dat doen met twee reversibele warmtepompen die de twee beheersvolumes koppelen aan een denkbeeldig bad. Entropie is een toestandsgrootheid, zodat de entropieproductie in dit proces net zo groot moet zijn als in onze zuiger van daarnet. Voor een reversibel proces zoals we met deze warmtepompen uitvoeren is er geen entropieproductie. Dan moet er dus gelden dat:

@@ -51,14 +51,14 @@ DT = 0                       # Tijdstap om geen botsing te missen
 V_PISTON_0 = -0.1 * V_0      # Startsnelheid van zuiger 
 # (negatief betekent zowel links als rechts naar binnen gericht)
 
-### begin-solution
+###begin-solution
 BOX_SIZE_0 = 1E-8              # Hoogte en breedte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 400                      # Startsnelheid van deeltjes
 RADIUS = 3E-10                 # Straal van moleculen
 DT = 7.5E-14                   # Tijdstap om geen botsing te missen 0.1 * RADIUS / V_0
 V_PISTON_0 = -40               # Startsnelheid van zuiger 
-### end-solution
+###end-solution
 ```
 
 Zoals altijd laden we de klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
@@ -168,13 +168,13 @@ def create_particles(particles):
     
 def temperature(particles) -> float:
     # De oplossing van je vorige werkblad
-    ### begin-solution
+    ###begin-solution
     temp = 0.0
     for p in particles:
         temp += p.kin_energy
     temp = 28 * 1.7E-27 * temp / (len(particles) * 1.38E-23) 
     return temp
-    ### end-solution
+    ###end-solution
     return 0.0
         
 def handle_collisions(particles):
@@ -368,12 +368,12 @@ plt.ylabel('Temperature')
 
 temperatures = np.asarray(temperatures)
 
-### begin-solution
+###begin-solution
 plt.xlabel('Volume [m$^{2}$]')
 plt.ylabel('Temperature [K]')
 # volume correct in nm^2
 # temperatures in K
-### end-solution
+###end-solution
 
 plt.plot(volumes, temperatures, '-r')
 
@@ -403,7 +403,7 @@ create_particles(particles)     # resetten deeltjes
 for i in range(num_steps):
     take_time_step(particles)
     # RUIMTE VOOR UITWERKING
-    ### begin-solution
+    ###begin-solution
     volumes[i] = box_length * box_height
     pressures[i] = pressure 
 
@@ -416,7 +416,7 @@ plt.ylabel('pressure [kg/s$^{2}$]')
 plt.plot(volumes, pressures, '-r')
 
 plt.show()
-### end-solution
+###end-solution
 
 # PLOT GRAFIEK
 ```
@@ -431,9 +431,9 @@ Leg uit welke factor je hier verwacht voor de exponent op basis van de theorie v
 ```{solution} ex-arbeid-05
 Jouw antwoord hier...
 
-### begin-solution
+###begin-solution
 Deze exponent is -gamma (k in het boek). Het gaat hier om een ideaal gas met $2$-dimensies zodat $k = \frac{C_p}{C_v} = \frac{C_v+R}{C_v} = \frac{2/2 R + R}{R} = 2$. We verwachten hier dus de exponent $-2$.
-### end-solution 
+###end-solution 
 ```
 
 
@@ -453,7 +453,7 @@ def power_law(vol, a, n):
 
 # RUIMTE VOOR VERDERE UITWERKING
 
-### begin-solution
+###begin-solution
 # we fitten de eerste 20 punten niet mee in verband met de integrator vd druk
 popt, pocv = curve_fit(power_law, volumes[20:], pressures[20:], maxfev=8000, p0=[1E-40, -2], bounds=((0, -4),(1E-24,-1)))
 
@@ -470,7 +470,7 @@ plt.plot(x_fit, y_fit, 'r-', label='power law with $n = %0.2g * V ^{%0.2f}$' % (
 plt.legend()
 
 plt.show()
-### end-solution
+###end-solution
 
 ```
 
@@ -483,15 +483,15 @@ Wat is de belangrijkste reden voor deze afwijking? Geef een methode van aanpak w
 
 ```{solution} reason_power
 Jouw antwoord hier...
-### begin-solution
+###begin-solution
 De belangrijkste reden voor deze afwijking is dat onze deeltjes een eindige grootte hebben. We kunnen dat effect verkleinen door de deeltjes een kleinere straal te geven. Als alternatief kan je de formule van Van Der Waals in de fit-functie opnemen en het dode volume bepalen met de fit. Dat lukt alleen als je de beginwaardes voldoende correct hebt gekozen en ook voldoende domein hebt gekozen voor het volume.  
-### end-solution
+###end-solution
 ```
 
 ```python
 # Ruimte voorverificatie
 
-### begin-solution
+###begin-solution
 # breid deze code uit met jouw antwoord
 RADIUS = 1E-10                 # Straal van moleculen
 
@@ -538,7 +538,7 @@ plt.legend()
 plt.show()
 
 RADIUS = 3E-10                 # Straal van moleculen
-### end-solution
+###end-solution
 ```
 
 ## Eerste hoofdwet
@@ -589,9 +589,9 @@ Welke twee grootheden kan je nu tegen elkaar uitzetten om te valideren of de sim
 
 ```{solution} ex-arbeid-08
 Hier jouw antwoord...
-### begin-solution
+###begin-solution
 Omdat er geen warmteuitwissling plaatsvindt, zijn alleen de interne energie en de arbeid interessant. De interne energie wordt alleen gegeven door de kinetische term, want er is geen potentiële energie zonder krachtwisselwerking. We moeten dus de temperatuur plotten tegen arbeid. In welke vorm je dat doet, maakt niet echt uit. Als je hun waardes direct plot verwacht je een lineair verband: $\Delta W = \Delta E_{kin} \propto T$ 
-### end-solution 
+###end-solution 
 ```
 
 
@@ -609,7 +609,7 @@ v_piston = V_PISTON_0
 create_particles(particles)     # resetten deeltjes 
 
 # RUIMTE VOOR VERDERE UITWERKING
-### begin-solution
+###begin-solution
 temperatures = np.zeros(1000, dtype=float)
 works = np.zeros(1000, dtype=float)
 for i in range(1000):
@@ -624,7 +624,7 @@ plt.ylabel('Work')
 plt.plot(temperatures, works, '-r')
 
 plt.show()
-### end-solution
+###end-solution
 
 ```
 
@@ -647,7 +647,7 @@ box_length = BOX_SIZE_0         # zetten zuiger terug
 v_piston = V_PISTON_0
 create_particles(particles)     # resetten deeltjes 
 
-### begin-solution
+###begin-solution
 
 temperatures = np.zeros(2000, dtype=float)
 works = np.zeros(2000, dtype=float)
@@ -657,9 +657,9 @@ for i in range(1000):
     temperatures[i] = temperature(particles)
     works[i] = work
 
-### end-solution
+###end-solution
 v_piston = -V_PISTON_0 # zuiger richting wordt omgedraaid
-### begin-solution
+###begin-solution
 for i in range(1000,2000):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
@@ -676,7 +676,7 @@ plt.plot(temperatures[1000:1999], works[1000:1999], '-b')
 
 plt.show()
 
-### end-solution
+###end-solution
 ```
 
 ```{exercise} Afhankelijk van snelheid
@@ -694,7 +694,7 @@ box_length = BOX_SIZE_0         # zetten zuiger terug
 v_piston = 5 * V_PISTON_0
 create_particles(particles)     # resetten deeltjes
 
-### begin-solution
+###begin-solution
 temperatures = np.zeros(400, dtype=float)
 works = np.zeros(400, dtype=float)
 for i in range(200):
@@ -718,7 +718,7 @@ plt.plot(temperatures[0:199], works[0:199], '-r')
 plt.plot(temperatures[200:399], works[200:399], '-b')
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 In deze laatste simulatie zie je (bij een correcte code) dat nog altijd netjes wordt voldaan aan de eerste hoofdwet. Ondanks dat, zie je dat het systeem niet terugkeert naar de begintoestand. In het boek wordt dit omschreven in het deel over 'quasi-equilibrium': Processen moeten voldoende traag plaatsvinden zodat er zich een evenwicht kan vormen binnen het gas. Als processen te snel plaatsvinden is er geen sprake van equilibrium en kun je de macroscopische thermodynamische formules niet langer gebruiken.

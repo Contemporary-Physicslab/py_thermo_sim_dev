@@ -16,7 +16,7 @@ Zie voor de verdere inhoudelijke achtergrond de [Feynman lectures on Physics](ht
 
 ## Laden van eerdere code
 
-Eerst nemen we de pakketten van Python en de constanten voor de simulatie over. Voer je eigen getallen in, die je ook in de vorige werkbladen hebt gebruikt.
+Eerst nemen we de pakketten van Python en de constanten voor de simulatie over. 
 
 ```python
 import numpy as np
@@ -24,19 +24,11 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.optimize import curve_fit
 
-BOX_SIZE_0 = 0                 # Hoogte en breedte startvolume
-N = 40                         # Aantal deeltjes
-V_0 = 0                        # Startsnelheid van deeltjes
-RADIUS = 0                     # Straal van moleculen
-DT = 0                         # Tijdstap om geen botsing te missen
-
-### begin-solution
 BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 1                        # Startsnelheid van deeltjes
 RADIUS = 0.3 # pas aan         # Straal van moleculen
 DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
-### end-solution
 ```
 
 Dan maken we weer gebruik van de klasse voor het deeltje:
@@ -163,17 +155,17 @@ Dit beginsel is heel belangrijk voor de thermodynamica en stelt dat de energie i
 Maak een alternatieve vorm van de functie `create_particles` die alle deeltjes een beginsnelheid `V_0` volledig in de verticale richting geeft. Laat de regel `particles.clear()` staan. Deze zorgt ervoor dat je de lijst eerst leegmaakt als je een nieuwe beginsituatie wilt creëren en de variabele al eerder is aangemaakt. 
 ```
 
-```python
+```python tags = ["NB4_uniform_particles"]
 # jouw antwoord
 
 def create_uniform_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes met uniforme snelheid in lijst """
     particles.clear()
-    ### begin-solution
+    ###begin-solution
     for i in range(N):      
         pos = np.random.uniform(-BOX_SIZE_0/2 + RADIUS, BOX_SIZE_0/2 - RADIUS, 2)
         particles.append(ParticleClass(m=1.0, v=[0, V_0], r=pos, R=RADIUS))
-    ### end-solution
+    ###end-solution
 ```
 
 
@@ -185,7 +177,7 @@ Creëer `N` deeltjes met deze functie en plot hiervan de kinetische energie in d
 ```python
 # Jouw antwoord
 
-### begin-solution
+###begin-solution
 num_steps = round(2 * BOX_SIZE_0 / (V_0 * DT))
 
 particles = []
@@ -209,7 +201,7 @@ plt.plot(times, E_x, '-r', label="x")
 plt.plot(times, E_y, '-b', label="y")
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 Aan het resultaat van je simulatie kan je zien dat de deeltjes zich inderdaad gedragen volgens equipartitiebeginsel. Afwijkingen van het gemiddelde zijn het gevolg van de statistiek en worden voor grotere aantallen deeltjes relatief kleiner. 
@@ -370,7 +362,7 @@ Maak een fit van het histogram dat je hierboven hebt gemaakt en haal hieruit de 
 ```python
 # Jouw antwoord
 
-### begin-solution
+###begin-solution
 def maxwell2d(v,a):
     return a*v*np.exp(-a*v**2/2)
 
@@ -396,7 +388,7 @@ plt.legend()
 plt.show()
 
 print(1.0/(2*popt[0]) * 30 * 1.7E-27 * (1E-9 / 2.5E-12)**2 / 1.38E-23)
-### begin-solution
+###begin-solution
 ```
 
 ```{exercise}

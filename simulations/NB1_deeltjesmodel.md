@@ -229,7 +229,7 @@ En als je wilt gaan voor een uitdaging:
 ```
 
 ```python
-### begin-solution
+###begin-solution
 # Note this is a rather hacky way of doing things
 
 N = 10
@@ -256,7 +256,7 @@ for particle in particle_array:
 plt.xlim(-2,12)
 plt.ylim(-.5,.5)
 plt.show()
-### end-solution
+###end-solution
 ```
 
 Onze simulaties worden snel “zwaar”. Er moeten veel berekeningen gedaan worden en dat kost nu eenmaal tijd. Nu is het wel zo dat sommige berekeningen meer tijd kosten dan anderen. Om te kijken of een stukje code geoptimaliseerd kan worden, moeten we een timer maken. Dat kan met onderstaande code:
@@ -459,10 +459,10 @@ Controleer je eigen antwoord door de functie hierboven even te vervangen door de
 def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
-### begin-solution
+###begin-solution
     if particle.r[0]**2>=100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.r[0] = -particle.r[0]
-### end-solution
+###end-solution
     return dot,         
 ```
 
@@ -478,10 +478,10 @@ Test wederom je code door de vernieuwde functie hierboven te plakken.
 def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
-### begin-solution
+###begin-solution
     if particle.r[0]**2>=100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[0] = -particle.v[0]
-### end-solution
+###end-solution
     return dot,
 ```
 
@@ -496,9 +496,9 @@ Verander nu de code zodanig dat de beginsnelheid gegeven wordt door $\vec{v}=5\h
 dt = 0.1         # time step
 num_steps = 500  # number of time steps
 
-### begin-solution
+###begin-solution
 particle = ParticleClass(m=1.0, v=[5.0, 3.0], r=[0.0, 0.0],R=1.0)  
-### end-solution
+###end-solution
 
 # Create the figure and axis
 fig, ax = plt.subplots()
@@ -521,12 +521,12 @@ def init():
 def update(frame):
     particle.update_position()
     dot.set_data([particle.r[0]], [particle.r[1]])
-    ### begin-solution
+    ###begin-solution
     if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[0] = -particle.v[0]
     if particle.r[1]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[1] = -particle.v[1]
-    ### end-solution
+    ###end-solution
     return dot,
 
 # Create animation
@@ -573,9 +573,9 @@ class ParticleClass:
 dt = 0.1         # time step
 num_steps = 500  # number of time steps
 particle = ParticleClass(m=1.0, v=[5.0, 0], r=[0.0, 0.0],R=1.0)  
-### begin-solution
+###begin-solution
 a = np.array([0.0, -9.81])  
-### end-solution
+###end-solution
 # Create the figure and axis
 fig, ax = plt.subplots()
 ax.set_xlim(-10, 10)
@@ -599,12 +599,12 @@ def update(frame):
     particle.update_position()
     
     dot.set_data([particle.r[0]], [particle.r[1]])
-    ### begin-solution
+    ###begin-solution
     if particle.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[0] = -particle.v[0]
     if particle.r[1]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particle.v[1] = -particle.v[1]
-    ### end-solution
+    ###end-solution
     return dot,
 
 # Create animation
@@ -711,11 +711,11 @@ Maak de code hieronder voor twee deeltjes die bewegen in een afgesloten doos. Be
 dt = 0.1         # time step
 num_steps = 500  # number of time steps
 particleA = ParticleClass(m=1.0, v=[0, 0], r=[0.0, 0.0],R=1.0)  
-### begin-solution
+###begin-solution
 particleB = ParticleClass(m=1.0, v=[5.0, 0], r=[0.0, 0.0],R=1.0)
 
 a = np.array([0.0, -5.0])  
-### end-solution
+###end-solution
 
 track_x = []
 track_y = []
@@ -744,10 +744,10 @@ def update(frame):
     particleA.update_position()
     particleA.update_velocity(a)
 
-### begin-solution
+###begin-solution
     particleB.update_position()
     particleB.update_velocity(a)
-### end-solution
+###end-solution
 
     track_x.append(particleA.r[0])
     track_y.append(particleA.r[1])
@@ -811,11 +811,11 @@ class ParticleClass:
         self.r += self.v * dt  
 
     def collide_detection(self, other):
-        ### begin-solution
+        ###begin-solution
         dx = self.r[0] - other.r[0]
         dy = self.r[1] - other.r[1]
         rr = self.R + other.R
-        ### end-solution
+        ###end-solution
         return  dx**2+dy**2 < rr**2 
 ```
 
@@ -867,10 +867,10 @@ def update(frame):
 
     # botsing tussen de deeltjes onderling
     if particleA.collide_detection(particleB):
-        ### begin-solution
+        ###begin-solution
         particleA.v[0] = -particleA.v[0]
         particleB.v[0] = -particleB.v[0]
-        ### end-solution
+        ###end-solution
 
 
     # botsing met de wand
@@ -1024,22 +1024,22 @@ def update(frame):
         vB_new = vB - 2 * mA / (mA + mB) * np.dot(vB - vA, rB - rA) / (1e-12+np.linalg.norm(rB - rA))**2 * (rB - rA)
         particleA.v = vA_new
         particleB.v = vB_new
-        ### begin-solution
+        ###begin-solution
         counter += 1
-        ### end-solution
+        ###end-solution
 
 
     # wall collision detection and response
     if particleA.r[0]**2>100: # Check if particle is outside the bounds, np.abs could be used but is slower
         particleA.v[0] = -particleA.v[0]
-        ### begin-solution
+        ###begin-solution
         counter += 1
-        ### end-solution
+        ###end-solution
     if particleA.r[1]**2>100: 
         particleA.v[1] = -particleA.v[1]
-        ### begin-solution
+        ###begin-solution
         counter += 1
-        ### end-solution
+        ###end-solution
 
     dot.set_data([particleB.r[0]], [particleB.r[1]])
     if particleB.r[0]**2>100: 
@@ -1065,9 +1065,9 @@ Pas de bovenstaande code aan zodat $m_1 = 1$ en $m_2 = 50$. Run de code en geef 
 
 ```python tags=["NB1_eindantwoord"]
 num_botsingen =
-### begin-solution 
+###begin-solution 
 num_botsingen = 22
-### end-solution
+###end-solution
 ```
 
 ```{exercise}

@@ -45,10 +45,10 @@ Het antwoord gebruik je zo direct in de code hieronder.
 ```
 
 ```{solution} ex-recap-1
-### begin-solution
+###begin-solution
     $P V = N k_B T$, zodat $V_{molecuul} = \frac{k_B T}{P}$.
     Dit levert een kubus met een ribbe van ongeveer 1.6 nm.
-### end-solution
+###end-solution
 ```
 
 De simulatie die we gaan maken bevat maar twee dimensies. We kunnen het oppervlak per deeltje in deze simulatie daarom kiezen als het zojuist berekende $V_\text{molecuul}^{2/3}$.
@@ -68,10 +68,10 @@ Ook deze heb je hierna nodig.
 ```
 
 ```{solution} ex-recap-2
-### begin-solution
+###begin-solution
     $1/2 m<v^2> = k_B T$ dus $v = \sqrt{\frac{2 k_B T}{m}}$  
     $v = \sqrt{\frac{2 \cdot 1.38 \times 10^{-23} \cdot 293}{30 \cdot 1.66 \times 10^{-27}}} \approx 4\cdot 10^2 \, \mathrm{m/s}$
-### end-solution
+###end-solution
 ```
 
 ```{exercise} Radius
@@ -80,9 +80,9 @@ Kies de eenheden waarin je de simulatie wilt gaan uitwerken. Dit kan in $\mathrm
 ```
 
 ```{solution} ex-recap-3
-### begin-solution
+###begin-solution
     Bijvoorbeeld m, maar doet er niet toe
-### end-solution
+###end-solution
 ```
 
 ```{exercise} DT
@@ -100,13 +100,13 @@ V_0 = 0                         # Startsnelheid van deeltjes (vul je gekozen een
 RADIUS = 0                      # Straal van moleculen (vul je gekozen eenheid in)
 DT = 0                          # Tijdstap om geen botsing te missen (vul je gekozen eenheid in)
 
-### begin-solution
+###begin-solution
 BOX_SIZE_0 = 10                # Hoogte en breedte startvolume (nm)
 N = 40                         # Aantal deeltjes
 V_0 = 1                        # Startsnelheid van deeltjes (in nm per 2.5 ps)
 RADIUS = 0.3                   # Straal van moleculen (nm)
 DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen (* 2.5 ps)
-### end-solution
+###end-solution
 ```
 
 ### Particle class
@@ -199,9 +199,9 @@ Leg uit dat d.m.v. onderstaande code de deeltjes allemaal dezelfde snelheid hebb
 
 ```{solution} ex-recap-5
 Jouw antwoord hier...
-### begin-solution
+###begin-solution
     Door de stelling van Pythagoras te gebruiken voor de componenten van de snelheid en met de functie `uniform`.
-### end-solution
+###end-solution
 ```
 
 ```python
@@ -227,9 +227,9 @@ Leg uit hoe er in onderstaande code wordt voorkomen dat de botsing tussen twee d
 
 ```{solution} ex-recap-6
 Jouw antwoord hier...
-### begin-solution
+###begin-solution
     Door de tweede lus te starten een index voorbij de plek van de eerste lus.
-### end-solution
+###end-solution
 ```
 
 ```python
@@ -338,12 +338,12 @@ create_particles(particles)
 for i in range(100):
     take_time_step(particles)
     # voeg de som van de kinetische energie in deze stap toe aan energy_tot 
-    ### begin-solution
+    ###begin-solution
     energy_tot.append(sum(p.kin_energy for p in particles))
-    ### end-solution
+    ###end-solution
 
 # plot de figuur van de kinetische energie als functie van de tijd. 
-### begin-solution
+###begin-solution
 plt.figure()
 plt.xlabel('$t$')
 plt.ylabel('$E_kin$')
@@ -352,7 +352,7 @@ plt.ylim(N/2 - 1e-9, N/2 + 1e-9)
 plt.plot(np.linspace(1, 100, 100), energy_tot, '-b')
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 ```{exercise} 
@@ -362,9 +362,9 @@ Als je heel nauwkeurig naar de waarde voor de totale kinetische energie kijkt, d
 
 ```{solution} ex-recap-8
 Jouw antwoord hier...
-### begin-solution
+###begin-solution
     Dit komt door de kleinste bit in de variabele. Die levert een statistische fout.
-### end-solution 
+###end-solution 
 ```
 
 ```{exercise}
@@ -373,7 +373,7 @@ Noem nog een andere grootheid die behouden moet zijn. Geef ook van deze groothei
 ```
 
 ```python
-### begin-solution
+###begin-solution
 
 particles = []
 px_tot = []
@@ -390,7 +390,7 @@ plt.ylim(min(px_tot),max(px_tot))
 plt.plot(np.linspace(1, 100, 100), px_tot, '-b')
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 
@@ -578,9 +578,9 @@ Voeg voor deze regel goede metadata toe.
 ```
 
 ```{solution} ex-brownian-1
-### begin-solution
+###begin-solution
 Daar wordt een zwaar, roodgekleur deeltje toegevoegd.
-### end-solution
+###end-solution
 ```
 
 
@@ -619,9 +619,9 @@ Hoe wordt er voor gezorgd dat de snelheid van elk deeltje gelijk is?
 ```
 
 ```{solution} ex-brownian-2
-### begin-solution
+###begin-solution
     Daar wordt voor gezorgd door eerst een variabele x-component te creëren die tussen de maximaal negatieve en maximaal positieve waarde inzit. De y-component wordt dan zo gekozen, dat de totale snelheid precies gelijk is aan de constante gedefinieerd aan het begin. 
-### end-solution
+###end-solution
 ```
 
 We gaan nu de functies van de simulatie weer aanroepen:
@@ -651,18 +651,18 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
     p2.v += 2 * m1 / (m1 + m2) * dot_product / distance_squared * delta_r
 
 def handle_collisions(particles):
-    ### begin-solution
+    ###begin-solution
     global counter
-    ### end-solution
+    ###end-solution
     """ alle onderlinge botsingen afhandelen voor deeltjes in lijst """
     num_particles = len(particles)
     for i in range(num_particles):
         for j in range(i+1, num_particles):
             if collide_detection(particles[i], particles[j]):
                 particle_collision(particles[i], particles[j])
-                ### begin-solution
+                ###begin-solution
                 counter += 1
-                ### end-solution
+                ###end-solution
 
 ```
 
@@ -673,24 +673,24 @@ In onderstaande code geven we de code voor de simulatie en volgen we de positie 
 track_x = []
 track_y = []
 
-### begin-solution
+###begin-solution
 track_x2 = []
 track_y2 = []
-### end-solution
+###end-solution
 
-### begin-solution
+###begin-solution
 track_x2 = []
 track_y2 = []
-### end-solution
+###end-solution
 
-### begin-solution
+###begin-solution
 botsingen = []
-### end-solution
+###end-solution
 
 for i in range(400):
-    ### begin-solution
+    ###begin-solution
     counter = 0
-    ### end-solution
+    ###end-solution
     
     for p in particles:
         p.update_position()    # Update positie        
@@ -698,23 +698,23 @@ for i in range(400):
         
     handle_collisions(particles)
 
-    ### begin-solution
+    ###begin-solution
     botsingen.append(counter)
-    ### end-solution
+    ###end-solution
     
     track_x.append(particles[N-1].r[0])
     track_y.append(particles[N-1].r[1])
     
-### begin-solution
+###begin-solution
     track_x2.append(particles[0].r[0])
     track_y2.append(particles[0].r[1])
-### end-solution
+###end-solution
 
 plt.figure()
 plt.plot(track_x,track_y,'r')
-### begin-solution
+###begin-solution
 plt.plot(track_x2,track_y2,'b')
-### end-solution
+###end-solution
 plt.show()
 ```
 
@@ -813,9 +813,9 @@ ani.save("deeltjes.gif", writer="pillow", fps=20)
 ```
 
 ```{solution} ex-brownian-3
-### begin-solution
+###begin-solution
 Het zware deeltje beweegt in een rechter pad. Totale afstande van beginpunt hangt sterk af van de botsingen.
-### end-solution
+###end-solution
 ```
 
 
@@ -829,7 +829,7 @@ Plot hieronder het aantal botsingen als functie van de tijd.
 ```
 
 ```python
-### begin-solution
+###begin-solution
 plt.figure()
 plt.xlabel('tijdstap')
 plt.ylabel('aantal botsingen')
@@ -837,7 +837,7 @@ plt.ylabel('aantal botsingen')
 plt.plot(botsingen)
 
 plt.show()
-### end-solution
+###end-solution
 ```
 
 ```{warning} 🌶 Let op!
@@ -863,7 +863,7 @@ Maar voor een histogram hebben we veel deeltjes nodig.
 
 
 ```python
-### begin-solution
+###begin-solution
 
 # sloppy programming
 
@@ -919,7 +919,7 @@ plt.figure()
 plt.hist(afstand, bins=num_bins, density=True)
 plt.vlines(afstand[-1],0,max(counts),'r')
 plt.show()
-### end-solution
+###end-solution
 
 ```
 
@@ -934,7 +934,7 @@ We kunnen twee "groepen" van deeltjes aanmaken, elk  met een andere massa. Als w
 ```
 
 ```python
-### begin-solution
+###begin-solution
 # Maken van de ParticleClass
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1083,7 +1083,7 @@ for particle, particle_object in enumerate(particles):
 plt.show()
 
 
-### end-solution
+###end-solution
 
 ```
 
