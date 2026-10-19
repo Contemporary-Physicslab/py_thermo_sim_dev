@@ -408,7 +408,7 @@ plt.legend()
 plt.show()
 
 print(1.0/(2*popt[0]) * 30 * 1.7E-27 * (1E-9 / 2.5E-12)**2 / 1.38E-23)
-###begin-solution
+###end-solution
 ```
 
 ```{exercise}
@@ -427,6 +427,6 @@ We kunnen deze opdracht makkelijk uitbreiden door de deeltjes van verschillende 
 - Bedenk zelf een interessante uitbreiding.
 ```
 
-```python
+```python tags = ["NB4_excellent"]
 
 ```
