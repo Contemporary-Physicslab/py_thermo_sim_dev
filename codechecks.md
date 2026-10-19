@@ -11,3 +11,6 @@
 | NB3_check_const_temp | ✅ PASS |  |
 | NB3_plot_pres | ✅ PASS |  |
 | NB4_uniform_particles | ✅ PASS |  |
+| NB4_numsteps | ❌ FAIL | invalid syntax (<string>, line 2) |
+| NB4_maxwell2d | ✅ PASS |  |
+| NB4_maxwell2d | ✅ PASS |  |

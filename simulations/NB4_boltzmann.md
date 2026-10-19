@@ -18,7 +18,7 @@ Zie voor de verdere inhoudelijke achtergrond de [Feynman lectures on Physics](ht
 
 Eerst nemen we de pakketten van Python en de constanten voor de simulatie over. 
 
-```python
+```python tags = ["NB4_init_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -33,7 +33,7 @@ DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 
 Dan maken we weer gebruik van de klasse voor het deeltje:
 
-```python
+```python tags = ["NB4_init_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -76,7 +76,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 En we laten de deeltjes met de wanden botsen, zodat er sprake is van een druk en een temperatuur in een gesloten volume.
 
-```python
+```python tags = ["NB4_init_3"]
 def box_collision(particle: ParticleClass):
     ''' botsing met harde wanden '''
     if abs(particle.r[0]) + particle.R > BOX_SIZE_0/2: 
@@ -91,7 +91,7 @@ def box_collision(particle: ParticleClass):
 
 Waarbij we al deze functies uitvoeren en samennemen over een lijst met deeltjes:
 
-```python
+```python tags = ["NB4_init_4"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     particles.clear()
@@ -155,7 +155,7 @@ Dit beginsel is heel belangrijk voor de thermodynamica en stelt dat de energie i
 Maak een alternatieve vorm van de functie `create_particles` die alle deeltjes een beginsnelheid `V_0` volledig in de verticale richting geeft. Laat de regel `particles.clear()` staan. Deze zorgt ervoor dat je de lijst eerst leegmaakt als je een nieuwe beginsituatie wilt creëren en de variabele al eerder is aangemaakt. 
 ```
 
-```python tags = ["NB4_uniform_particles"]
+```python tags=["NB4_uniform_particles"]
 # jouw antwoord
 
 def create_uniform_particles(particles):
@@ -174,9 +174,9 @@ def create_uniform_particles(particles):
 Creëer `N` deeltjes met deze functie en plot hiervan de kinetische energie in de $x-$ en de $y-$richting als functie van tijd. Neem zoveel tijdstappen als dat er in principe nodig zijn om de deeltjes twee keer de lengte van het volume af te laten leggen. 
 ```
 
-```python
+```python tags=["NB4_numsteps"]
 # Jouw antwoord
-
+num_steps = 
 ###begin-solution
 num_steps = round(2 * BOX_SIZE_0 / (V_0 * DT))
 
@@ -199,7 +199,7 @@ plt.ylabel('time')
 
 plt.plot(times, E_x, '-r', label="x")
 plt.plot(times, E_y, '-b', label="y")
-
+plt.legend()
 plt.show()
 ###end-solution
 ```
@@ -221,13 +221,13 @@ for i in range(num_steps):
     take_time_step(particles)
 
 speeds = [np.linalg.norm(p.v) for p in particles]
-counts, bins = np.histogram(speeds, bins=10, density='True')
+
 
 plt.figure()
 plt.xlabel('Speed')
 plt.ylabel('Count')
 
-plt.stairs(counts, bins, fill='True')
+plt.hist(speeds, bins=10, fill='True', density=True)
 
 plt.show()
 
@@ -235,11 +235,11 @@ plt.show()
 
 ### Voldoende statistiek
 
-Als je de simulatie hierboven een aantal keer uitvoert, dan zal je zien dat de statistiek onvoldoende is om een reproduceerbaar antwoord te krijgen. We kunnen het aantal deeltjes toe laten nemen om meer statistiek te krijgen, maar dat kost heel veel rekenkracht. Het is een goedkopere oplossing om de statistiek te bepalen op verschillende momenten in de tijd en deze statistische resultaten te middelen. De onderstaand code laat de deeltjes 5000 tijdstappen zetten en noteert de snelheid van alle deeltjes op elke 250e tijdstap. Het histogram wordt dan bepaald door de snelheden bij elke 250e tijdstap samen te nemen. 
+Als je de simulatie hierboven een aantal keer uitvoert, dan zal je zien dat de statistiek onvoldoende is om een reproduceerbaar antwoord te krijgen. We kunnen het aantal deeltjes toe laten nemen om meer statistiek te krijgen, maar dat kost heel veel rekenkracht. Het is een goedkopere oplossing om de statistiek te bepalen op verschillende momenten in de tijd en deze statistische resultaten te middelen. De onderstaand code laat de deeltjes 5000 tijdstappen zetten en noteert de snelheid van alle deeltjes op elke 250e tijdstap. Het histogram wordt dan bepaald door de snelheden bij elke $250^e$ tijdstap samen te nemen. 
 
 Door de simulatie een aantal keer te draaien zie je dat de verdeling al een stuk stabieler wordt. 
 
-```python
+```python tags=["NB4_init"]
 particles = []
 num_bins = 10
 tot_counts = np.zeros(num_bins, dtype=float)
@@ -261,6 +261,12 @@ norm_counts = tot_counts / 20
 plt.stairs(norm_counts, bins, fill='True')
 plt.show()
 ```
+
+```{note} stairs vs histogram
+In de vorige opdracht gebruikten we `plt.hist()` waar we nu `plt.stairs()` gebruiken. Het verschil is dat plt.stairs een voorgerekende histogram waarden als input neemt en deze weergeeft, terwijl plt.hist de histogramwaarden zelf berekent en vervolgens weergeeft.
+```
+
+
 
 ### De mathematische vorm van de snelheidsverdeling
 
@@ -299,7 +305,7 @@ $$
 $$
 
 
-Je kan precies dezelfde redenering ook opzetten vanuit de $y$-coördinaat in plaats van de $x$-coördinaat. De termen die je hier gevonden hebt zijn daarmee functies van verschillende en onderling onafhankelijke variabelen die toch hetzelfde antwoord geven. Ze moeten daarom constant zijn. Die constante noemen we $-2\alpha$, omdat dit de formules verderop vereenvoudigt:
+Je kan precies dezelfde redenering ook opzetten vanuit de $y$-coördinaat in plaats van de $x$-coördinaat. De termen die je hier gevonden hebt zijn daarmee functies van verschillende en onderling onafhankelijke variabelen die toch hetzelfde antwoord geven. Ze moeten daarom constant zijn. Die constante noemen we $-2\alpha$ omdat dit de formules verderop vereenvoudigt:
 
 $$
     \frac{1}{v_r f(v_r)}\left(\frac{\partial f(v_r)}{\partial v_r}\right)=\frac{1}{v_x f(v_x)} \frac{df(v_x)}{dv_x}=\frac{1}{v_y f(v_y)} \frac{df(v_y)}{dv_y} = -2\alpha
@@ -320,7 +326,7 @@ $$
 $$
 
 
-Bij het vak Multivariabele Analyse zal je deze integraal tegenkomen aan het einde van dit blok. Daar wordt bewezen dat de integraal onder deze functie precies "1" is als (we zeggen ook wel: de functie is _genormaliseerd_):
+Bij het vak Multivariabele Analyse zal je deze integraal ook tegenkomen. Daar wordt bewezen dat de integraal onder deze functie precies "1" is als (we zeggen ook wel: de functie is _genormaliseerd_):
 
 $$
     A = \sqrt{\frac{\alpha}{\pi}}
@@ -359,28 +365,42 @@ $$
 Maak een fit van het histogram dat je hierboven hebt gemaakt en haal hieruit de temperatuur. LET OP: De variabele `bins` die hierboven is gebruikt, geeft de grenzen weer van de bins. Het aantal elementen in de array `norm_counts` bevat dus een element minder dan het array `bins`. Voor het fitten moet je gebruik maken van de centrale snelheidswaardes van de bins.  
 ```
 
-```python
+```python tags=["NB4_maxwell2d"]
 # Jouw antwoord
 
-###begin-solution
+particles = []
+num_bins = 20
+tot_counts = np.zeros(num_bins, dtype=float)
+
+plt.figure()
+plt.xlabel('Speed')
+plt.ylabel('Count')
+
+create_uniform_particles(particles)
+
+for i in range(5000):
+    take_time_step(particles)
+    if i % 250 == 0:
+        speeds = [np.linalg.norm(p.v) for p in particles]
+        partial_counts, bins = np.histogram(speeds, bins=num_bins, density='True', range=[0,3*V_0])
+        tot_counts += partial_counts
+
+norm_counts = tot_counts / 20
+
 def maxwell2d(v,a):
+###begin-solution
     return a*v*np.exp(-a*v**2/2)
+
 
 #let op: histogram lijkt niet de centrale waarde van de bin te geven.
 bin_centers = 0.5 * (bins[:-1] + bins[1:])
 
-
 # Vinden van de optimale paramters
 popt, pcov = curve_fit(maxwell2d, bin_centers, norm_counts)
 
-
-plt.figure()
-
-plt.xlabel('speed')
-plt.ylabel('Frequency (normalized)')
-
 x_fit = np.linspace(0, 3*V_0,100)
 y_fit = maxwell2d(x_fit, *popt)
+
 plt.stairs(norm_counts, bins, fill='True', label='data')
 plt.plot(x_fit, y_fit, 'r-', label='fit')
 
@@ -393,7 +413,7 @@ print(1.0/(2*popt[0]) * 30 * 1.7E-27 * (1E-9 / 2.5E-12)**2 / 1.38E-23)
 
 ```{exercise}
 :label: ex-boltzmann-4
-Controleer of de temperatuur van de verdeling klopt met je verwachting en overeenkomt met de constanten die je bovenaan hebt gekozen. Daarna kan je de opdracht laten afteken door de TA, of de uitgebreide opdracht maken voor een excellent.
+Controleer of de temperatuur van de verdeling klopt met je verwachting en overeenkomt met de constanten die je bovenaan hebt gekozen. Daarna kun je de opdracht pushen naar GitHub en een merge doen. Ga je voor excellent? Doe dan eerst onderstaande opdracht.
 ```
 
 
@@ -405,3 +425,8 @@ We kunnen deze opdracht makkelijk uitbreiden door de deeltjes van verschillende 
 - Splits het snelheidshistogram in twee kleuren: voor elke massa een aparte kleur.
 - Vind de juiste grootheid, zodat de twee histogrammen voor de verschillende massa's er hetzelfde uitzien en over elkaar vallen.
 - Bedenk zelf een interessante uitbreiding.
+```
+
+```python
+
+```
