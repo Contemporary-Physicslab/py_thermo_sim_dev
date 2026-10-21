@@ -1,7 +1,9 @@
 from pathlib import Path
 import numpy as np
-import jupytext
+#import jupytext
 import matplotlib
+import sys
+from scripts.checker import CodeChecker
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -15,6 +17,7 @@ from NB1 import (
 
 from NB2 import (
     check_brownian_distance_histogram_solution,
+    check_ex7
 )
 
 
@@ -32,144 +35,26 @@ from NB4 import (
     check_excellent,
 )
 
-def get_tagged_cell(notebook_path, tag):
-    nb = jupytext.read(notebook_path)
-
-    for cell in nb.cells:
-        if cell.cell_type != "code":
-            continue
-
-        if tag in cell.metadata.get("tags", []):
-            return cell.source
-
-    raise ValueError(f"Geen codecel gevonden met tag {tag!r}")
-
 
 results = []
 
 
-def check_cell(
-    notebook_path,
-    name,
-    test_function,
-    mode="function",
-    variable=None,
-    init_tags=None,
-):
+def check_cell(tag, notebook_path, test_function, init_tags=[], with_previous_cells=False):
+
     try:
-        # Shared namespace for all cells in this check
-        namespace = {
-            "np": np,
-            "dt": 0.1,
-            "plt": plt,
-        }
+        checker = CodeChecker(notebook_path)
 
-        # Execute initialization cells first
-        for tag in (init_tags or []):
-            init_source = get_tagged_cell(notebook_path, tag)
-            exec(init_source, namespace)
+        plots, namespace = checker.checkWithTag(tag, init_tags=init_tags, run_previous_cells=with_previous_cells)
 
-        # Read the actual exercise cell
-        source = get_tagged_cell(notebook_path, name)
+        # Run the corresponding test from NB1.py
+        test_function(namespace, plots)
 
-        if mode == "source":
-            student_object = source
-
-        elif mode == "pressure_loop":
-
-            calls = {"create": 0, "steps": 0}
-
-            def fake_create_particles(particles):
-                calls["create"] += 1
-                particles.append(object())
-
-            def fake_take_time_step(particles):
-                calls["steps"] += 1
-                namespace["pressure"] = float(calls["steps"])
-
-            namespace["create_particles"] = fake_create_particles
-            namespace["take_time_step"] = fake_take_time_step
-
-            exec(source, namespace)
-
-            test_function(namespace["pressures"], calls)
-
-            results.append((name, True, ""))
-            print(f"PASS: {name}")
-            return
-
-        elif mode == "function_only":
-            import ast
-
-            tree = ast.parse(source)
-
-            functions = [
-                node
-                for node in tree.body
-                if isinstance(node, ast.FunctionDef)
-            ]
-
-            if len(functions) != 1:
-                raise ValueError(
-                    f"Expected one function, found {len(functions)}."
-                )
-
-            function_module = ast.Module(
-                body=functions,
-                type_ignores=[]
-            )
-
-            exec(compile(function_module, "<student>", "exec"), namespace)
-
-            student_object = namespace[functions[0].name]
-        
-        else:
-            # Execute exercise cell in the SAME namespace
-            exec(source, namespace)
-
-            if mode == "variable":
-                student_object = namespace[variable]
-
-            elif mode == "function":
-                # Find functions/classes defined by the exercise cell,
-                # not functions from the initialization cells
-                import ast
-
-                tree = ast.parse(source)
-
-                defined_names = [
-                    node.name
-                    for node in tree.body
-                    if isinstance(
-                        node,
-                        (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
-                    )
-                ]
-
-                objects = [
-                    namespace[name]
-                    for name in defined_names
-                    if callable(namespace.get(name))
-                ]
-
-                if len(objects) != 1:
-                    raise ValueError(
-                        f"Expected one function or class, found {len(objects)}."
-                    )
-
-                student_object = objects[0]
-
-            else:
-                raise ValueError(f"Unknown check mode: {mode}")
-
-        test_function(student_object)
-
-        results.append((name, True, ""))
-        print(f"PASS: {name}")
+        results.append((tag, True, ""))
+        print(f"PASS: {tag}")
 
     except Exception as exc:
-        results.append((name, False, str(exc)))
-        print(f"FAIL: {name}: {exc}")
+        results.append((tag, False, str(exc)))
+        print(f"FAIL: {tag}: {exc}")
 
 
 # Notebook file paths
@@ -181,30 +66,31 @@ notebook_file_paths = {
 }
 
 NB1_cell_checks = [
-    ("NB1_doorlopendedoos", check_doorlopende_doos, "function", None, []),
-    ("NB1_hardewand", check_harde_wanden, "function", None, []),
-    ("NB1_botsingsvoorwaarde", check_botsingsvoorwaarde, "function", None, []),
-    ("NB1_eindantwoord", check_eindantwoord, "variable", "num_botsingen", []),
+    ("NB1_doorlopendedoos", check_doorlopende_doos, []),
+    ("NB1_hardewand", check_harde_wanden, []),
+    ("NB1_botsingsvoorwaarde", check_botsingsvoorwaarde, []),
+    ("NB1_eindantwoord", check_eindantwoord, []),
 ]
 
 NB2_cell_checks = [
     ("NB2_brownian_distance_histogram",
-     check_brownian_distance_histogram_solution, "source", None, []),
+     check_brownian_distance_histogram_solution, ["NB2_init"]),
+    ("NB2_ex7", check_ex7, ["NB2_init"]),
 ]
 
 NB3_cell_checks = [
-    ("NB3_tempfun", check_tempfun, "function", None, []),
-    ("NB3_check_const_temp", check_const_temp, "variable", "temperatures",
-        ["NB3_init_1", "NB3_init_2", "NB3_init_3", "NB3_init_4", "NB3_tempfun", ],),
-    ("NB3_plot_pres", check_plot_pres, "pressure_loop", None, []),
+    ("NB3_tempfun", check_tempfun, []),
+    ("NB3_check_const_temp", check_const_temp,
+        ["NB3_init", "NB3_tempfun", ],),
+    ("NB3_plot_pres", check_plot_pres, ["NB3_init", "NB3_init_ex4"]),
 ]
 
 NB4_cell_checks = [
-    ("NB4_uniform_particles", check_uniform_particles, "function", None, []),
-    ("NB4_numsteps", check_numsteps, "source", None, []),
-    ("NB4_maxwell2d", check_maxwell2d, "function_only", None, []),
-    ("NB4_maxwell2d", check_maxwell_fit, "variable", "popt", ["NB4_init_1", "NB4_init_2", "NB4_init_3", "NB4_init_4","NB4_uniform_particles",]),
-    ("NB4_excellent", check_excellent, "source", None, []),
+    ("NB4_uniform_particles", check_uniform_particles, []),
+    ("NB4_numsteps", check_numsteps, ["NB4_init_1", "NB4_init_2", "NB4_init_3", "NB4_init_4","NB4_uniform_particles"]),
+    ("NB4_maxwell2d", check_maxwell2d, ["NB4_init_1", "NB4_init_2", "NB4_init_3", "NB4_init_4", "NB4_uniform_particles"]),
+    ("NB4_maxwell2d", check_maxwell_fit, ["NB4_init_1", "NB4_init_2", "NB4_init_3", "NB4_init_4","NB4_uniform_particles"]),
+    ("NB4_excellent", check_excellent, []),
 ]
 
 cell_checks = {
@@ -214,17 +100,28 @@ cell_checks = {
     "NB4": NB4_cell_checks,
 }
 
-# Run all checks
-for notebook, path in notebook_file_paths.items():
-    for name, test_function, mode, variable, init_tags in cell_checks[notebook]:
+# get command line arguments
+args = sys.argv[1:]
+if len(args) == 1 and args[0] in cell_checks:
+    # Only run checks for the specified notebook
+    print(f"Running checks for notebook: {args[0]}")
+    for name, test_function, init_tags in cell_checks[args[0]]:
         check_cell(
-            path,
             name,
+            notebook_file_paths[args[0]],
             test_function,
-            mode=mode,
-            variable=variable,
-            init_tags=init_tags,
+            init_tags=init_tags
         )
+else:
+    # Run all checks
+    for notebook, path in notebook_file_paths.items():
+        for name, test_function, init_tags in cell_checks[notebook]:
+            check_cell(
+                name,
+                path,
+                test_function,
+                init_tags=init_tags
+            )
 
 
 # Generate Markdown report
