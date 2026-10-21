@@ -92,7 +92,7 @@ Pas waarde van `DT` aan zodat de verplaatsing van een deeltje in een tijdstap kl
 
 Onze simulatie modelleert dus een klein systeem zonder rekening te houden met de kracht tussen de luchtmoleculen. Je zult zien dat we toch al behoorlijk wat van de processor vragen om deze berekeningen te doen. Om een meer realistische modelsimulatie te maken is daarom een serieuze uitdaging, die veel wiskunde en programmeerervaring vraagt. Op dit ogenblik wordt dit bijvoorbeeld gevraagd bij een van de eerste opdrachten van het vak 'Computational Physics' van de master Applied Physics. 
 
-```python
+```python tags=["NB2_init"] editable=true slideshow={"slide_type": ""}
 # Ruimte voor uitwerking
 BOX_SIZE_0 = 0                  # Hoogte en breedte startvolume (in vul je gekozen eenheid in)
 N = 40                          # Aantal deeltjes 
@@ -116,7 +116,7 @@ Nieuw aan `ParticleClass` zijn twee properties, nl. `momentum` en `kin_energy`. 
 
 Buiten `ParticleClass` voegen we twee functies toe, die je ook al hebt gezien. De eerste heet `collide_detection` en detecteert of twee deeltjes onderling overlappen en dus botsen. De tweede heet `particle_collision` en berekent de nieuwe snelheden van de twee deeltjes ten gevolge van hun botsing.
 
-```python
+```python editable=true slideshow={"slide_type": ""} tags=["NB2_init"]
 # Maken van de class
 class ParticleClass:
     def __init__(self, m, v, r, R):
@@ -172,7 +172,7 @@ Je hebt hiervoor al een voorbeeld van gezien, maar hieronder gebruiken we een an
 
 We maken gebruik van een truc die in veel simulaties wordt gebruikt: we maken gebruik van periodieke randvoorwaarden. In dit geval wil dit zeggen dat een deeltje dat botst met de wand aan de ene kant van het volume, aan de andere kant verschijnt met exact dezelfde snelheid. Op deze manier verandert de snelheid van een deeltje niet bij het botsen met de wand en blijven alle behoudswetten gelden. Die behoudswetten kunnen we straks goed controleren.
 
-```python
+```python editable=true slideshow={"slide_type": ""} tags=["NB2_init"]
 def box_collision(particle: ParticleClass):
     ''' botsing met wanden geeft periodieke randvoorwaarden '''
     for i in range(2):
@@ -204,7 +204,7 @@ Jouw antwoord hier...
 ###end-solution
 ```
 
-```python
+```python tags=["NB2_init"] editable=true slideshow={"slide_type": ""}
 def create_particles(particles):
     ''' Leegmaken en opnieuw aanmaken van deeltjes '''
     particles.clear
@@ -232,7 +232,7 @@ Jouw antwoord hier...
 ###end-solution
 ```
 
-```python
+```python editable=true slideshow={"slide_type": ""} tags=["NB2_init"]
 def handle_collisions(particles):
     """ alle onderlinge botsingen afhandelen voor deeltjes in lijst """
     num_particles = len(particles)
@@ -246,7 +246,7 @@ def handle_collisions(particles):
 
 Voor het bepalen of deeltjes botsen met de wanden maken we gebruik van de functie die we net hebben aangepast.
 
-```python
+```python editable=true slideshow={"slide_type": ""} tags=["NB2_init"]
 def handle_walls(particles):
     ''' botsing met wanden controleren voor alle deeltjes in volume '''
     for p in particles:
@@ -257,7 +257,7 @@ def handle_walls(particles):
 
 Nu moeten we alle functies op de juiste manier combineren om de simulatie een tijdstap te laten maken:
 
-```python
+```python editable=true slideshow={"slide_type": ""} tags=["NB2_init"]
 def take_time_step(particles):
     for p in particles:
         p.update_position()
@@ -329,7 +329,7 @@ Om te controleren of onze code werkt passen we nu de code aan.
 Voeg aan de simulatie een regel toe die voor elke tijdstap bepaalt wat de totale kinetische energie is voor alle deeltjes en neem deze waarde op in een array die bij elke tijdstap met één element groeit in lengte. Maak vervolgens een plot van de totale kinetische energie als functie van de tijd gedurende een simulatie van 100 tijdstappen.
 ```
 
-```python
+```python tags=["NB2_ex7"]
 # plotten van kinetische energie als functie van tijd
 
 particles = []
@@ -511,7 +511,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 ```
 
-```python
+```python tags=["NB2_init"]
 # Maken van de ParticleClass
 
 class ParticleClass:
@@ -545,7 +545,7 @@ class ParticleClass:
         return 1/2 * self.m * np.dot(self.v, self.v)
 ```
 
-```python
+```python tags=["NB2_init"]
 # Aanmaken van de randvoorwaarden en initiele condities
 Box_size_0 = 10
 Box_length_0 = Box_size_0/2
@@ -862,7 +862,7 @@ Maar voor een histogram hebben we veel deeltjes nodig.
 ```
 
 
-```python
+```python tags=["NB2_brownian_distance_histogram"] editable=true slideshow={"slide_type": ""}
 ###begin-solution
 
 # sloppy programming
@@ -873,7 +873,7 @@ Box_length = Box_length_0     # De grootte van de box kan wijzigen!
 
 # Particles
 particles = []
-N = 250
+N = 361
 
 # Opnieuw aaanmaken van deeltjes
 beginposities_x = []
