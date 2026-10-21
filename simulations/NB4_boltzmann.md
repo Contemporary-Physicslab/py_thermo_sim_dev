@@ -27,7 +27,7 @@ from scipy.optimize import curve_fit
 BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
 N = 40                         # Aantal deeltjes
 V_0 = 1                        # Startsnelheid van deeltjes
-RADIUS = 0.3 # pas aan         # Straal van moleculen
+RADIUS = 0.3                   # Straal van moleculen
 DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 ```
 
