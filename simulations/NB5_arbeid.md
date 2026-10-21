@@ -43,22 +43,14 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.optimize import curve_fit
 
-BOX_SIZE_0 = 0               # Hoogte en lengte startvolume
+BOX_SIZE_0 = 10              # Hoogte en lengte startvolume in nm
 N = 40                       # Aantal deeltjes
-V_0 = 0                      # Startsnelheid van deeltjes
-RADIUS = 0                   # Straal van moleculen
-DT = 0                       # Tijdstap om geen botsing te missen
+V_0 = 1                      # Startsnelheid van deeltjes in nm per tijdsstap
+RADIUS = 0.3                 # Straal van moleculen in nm
+DT = 0.03                    # Tijdstap in nm per tijdsstap om geen botsing te missen
 V_PISTON_0 = -0.1 * V_0      # Startsnelheid van zuiger 
 # (negatief betekent zowel links als rechts naar binnen gericht)
 
-###begin-solution
-BOX_SIZE_0 = 1E-8              # Hoogte en breedte startvolume
-N = 40                         # Aantal deeltjes
-V_0 = 400                      # Startsnelheid van deeltjes
-RADIUS = 3E-10                 # Straal van moleculen
-DT = 7.5E-14                   # Tijdstap om geen botsing te missen 0.1 * RADIUS / V_0
-V_PISTON_0 = -40               # Startsnelheid van zuiger 
-###end-solution
 ```
 
 Zoals altijd laden we de klasse voor de gasmoleculen en de functies voor hun onderlinge interactie:
