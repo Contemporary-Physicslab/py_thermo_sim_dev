@@ -19,4 +19,4 @@ jobs:
       run_nb_checks: false
       run_fig_checks: true
       run_code_checks: true
-      run_git_user_log: true
+      # run_git_user_log: true

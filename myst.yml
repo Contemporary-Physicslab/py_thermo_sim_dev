@@ -25,6 +25,7 @@ project:
     - title: Appendix
       children:
       - file: codechecks.md
+      # - file: gitlog.md
 
 extends:
   - https://gitlab.tudelft.nl/oicm/assets/-/raw/main/style.yml?ref_type=heads
