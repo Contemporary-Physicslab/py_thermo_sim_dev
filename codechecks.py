@@ -35,6 +35,11 @@ from NB4 import (
     check_excellent,
 )
 
+from NB9 import (
+    check_E_T,
+    check_E_T_2,
+    check_optimum,
+)
 
 results = []
 
@@ -63,6 +68,7 @@ notebook_file_paths = {
     "NB2": "simulations/NB2_brownianmotion.md",
     "NB3": "simulations/NB3_druktemp.md",
     "NB4": "simulations/NB4_boltzmann.md",
+    "NB9": "simulations/NB9_zonnecel.md",
 }
 
 NB1_cell_checks = [
@@ -93,11 +99,18 @@ NB4_cell_checks = [
     ("NB4_excellent", check_excellent, []),
 ]
 
+NB9_cell_checks = [
+    ("NB9_E_T", check_E_T, []),
+    ("NB9_E_T_2", check_E_T_2, []),
+    ("NB9_optimum", check_optimum, ["NB9_E_T", "NB9_E_T_2"]),
+]
+
 cell_checks = {
     "NB1": NB1_cell_checks,
     "NB2": NB2_cell_checks,
     "NB3": NB3_cell_checks,
     "NB4": NB4_cell_checks,
+    "NB9": NB9_cell_checks,
 }
 
 # get command line arguments
