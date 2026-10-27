@@ -8,6 +8,8 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 
+from ctrlcv import check_written_solution
+
 from NB1 import (
     check_doorlopende_doos,
     check_harde_wanden,
@@ -17,7 +19,7 @@ from NB1 import (
 
 from NB2 import (
     check_brownian_distance_histogram_solution,
-    check_ex7
+    check_ex7,
 )
 
 
@@ -61,6 +63,19 @@ def check_cell(tag, notebook_path, test_function, init_tags=[], with_previous_ce
         results.append((tag, False, str(exc)))
         print(f"FAIL: {tag}: {exc}")
 
+def check_written_answer(tag, notebook_path, test_function):
+
+    try:
+        answer = test_function(notebook_path, tag)
+
+        results.append((tag, "REVIEW", answer))
+
+        print(f"REVIEW: {tag}")
+
+    except Exception as exc:
+        results.append((tag, False, str(exc)))
+        print(f"FAIL: {tag}: {exc}")
+        
 
 # Notebook file paths
 notebook_file_paths = {
@@ -113,6 +128,17 @@ cell_checks = {
     "NB9": NB9_cell_checks,
 }
 
+written_checks = {
+    "NB2": [
+        ("ex-recap-5", check_written_solution),
+        ("ex-recap-6", check_written_solution),
+        ("ex-brownian-1", check_written_solution),
+        ("ex-brownian-3", check_written_solution),
+    ],
+}
+
+
+
 # get command line arguments
 args = sys.argv[1:]
 if len(args) == 1 and args[0] in cell_checks:
@@ -136,6 +162,20 @@ else:
                 init_tags=init_tags
             )
 
+# Check written answers
+if len(args) == 1 and args[0] in cell_checks:
+    notebooks_to_check = [args[0]]
+else:
+    notebooks_to_check = list(cell_checks.keys())
+
+for notebook in notebooks_to_check:
+    for tag, test_function in written_checks.get(notebook, []):
+        check_written_answer(
+            tag,
+            notebook_file_paths[notebook],
+            test_function
+        )
+
 
 # Generate Markdown report
 output = Path("codechecks.md")
@@ -147,7 +187,12 @@ with output.open("w", encoding="utf-8") as f:
     f.write("|-------|--------|---------|\n")
 
     for name, passed, message in results:
-        status = "✅ PASS" if passed else "❌ FAIL"
+        if passed == "REVIEW":
+            status = "📝 REVIEW"
+        elif passed:
+            status = "✅ PASS"
+        else:
+            status = "❌ FAIL"
         details = str(message).replace("|", r"\|").replace("\n", "<br>")
         f.write(f"| {name} | {status} | {details} |\n")
         

@@ -39,9 +39,7 @@ Hieronder geven we een aantal constanten voor onze code. Om de simulatie straks 
 ```{exercise} Lucht in een fietsband
 :label: ex-recap-1
 
-Als model gaan we uit van een deel van het volume van een fietsband die onder een druk van 10 bar staat.
-Laat zien dat het gemiddelde volume $V_{molecuul}$ ongeveer $1.6 \; \mathrm{nm} is.
-Het antwoord gebruik je zo direct in de code hieronder. 
+Als model gaan we uit van een deel van het volume van een fietsband die onder een druk van 10 bar staat. Laat zien dat het gemiddelde volume $V_{molecuul}$ ongeveer overeenkomt met een kubus met ribben van $1.6 \; \mathrm{nm}$ is. Het antwoord gebruik je zo direct in de code hieronder. 
 ```
 
 ```{solution} ex-recap-1
@@ -76,7 +74,7 @@ Ook deze heb je hierna nodig.
 
 ```{exercise} Radius
 :label: ex-recap-3
-Kies de eenheden waarin je de simulatie wilt gaan uitwerken. Dit kan in $\mathrm{m}$ maar ook in $\mathrm{mm}$ of iets anders. Pas de waardes voor de constanten `BOX_SIZE_0` en `V_0` in de hieronder gegeven code aan, zodat de simulatie een redelijk tweedimensionaal model is voor de fietsband. Hou hierbij het aantal deeltjes $N=40$ om de rekentijd van het model te beperken. Kies `RADIUS` gelijk aan 0.3 nm gebruik makend van jouw eenhedenstelsel.
+In de python cell hieronder staan enkele waarden gegeven. Het aantal deeltjes $N=40$ is beperkt, dit om de rekentijd van het model te beperken. 
 ```
 
 ```{solution} ex-recap-3
@@ -87,26 +85,17 @@ Kies de eenheden waarin je de simulatie wilt gaan uitwerken. Dit kan in $\mathrm
 
 ```{exercise} DT
 :label: ex-recap-4
-Pas waarde van `DT` aan zodat de verplaatsing van een deeltje in een tijdstap klein genoeg is om te detecteren of deze met een ander deeltje botst. Zet in het groene commentaar bij elke constante in welk eenheid deze wordt weergegeven.
+Bekijk de waarde van `DT`. Hoe zorgt deze waaarde ervoor dat het onwaarschijnlijk is dat een botsing gemist wordt? Zet in het groene commentaar bij elke constante in welk eenheid deze wordt weergegeven.
 ```
 
 Onze simulatie modelleert dus een klein systeem zonder rekening te houden met de kracht tussen de luchtmoleculen. Je zult zien dat we toch al behoorlijk wat van de processor vragen om deze berekeningen te doen. Om een meer realistische modelsimulatie te maken is daarom een serieuze uitdaging, die veel wiskunde en programmeerervaring vraagt. Op dit ogenblik wordt dit bijvoorbeeld gevraagd bij een van de eerste opdrachten van het vak 'Computational Physics' van de master Applied Physics. 
 
 ```python tags=["NB2_init"] editable=true slideshow={"slide_type": ""}
-# Ruimte voor uitwerking
-BOX_SIZE_0 = 0                  # Hoogte en breedte startvolume (in vul je gekozen eenheid in)
-N = 40                          # Aantal deeltjes 
-V_0 = 0                         # Startsnelheid van deeltjes (vul je gekozen eenheid in)
-RADIUS = 0                      # Straal van moleculen (vul je gekozen eenheid in)
-DT = 0                          # Tijdstap om geen botsing te missen (vul je gekozen eenheid in)
-
-###begin-solution
-BOX_SIZE_0 = 10                # Hoogte en breedte startvolume (nm)
+BOX_SIZE_0 = 10                # Hoogte en lengte startvolume
 N = 40                         # Aantal deeltjes
-V_0 = 1                        # Startsnelheid van deeltjes (in nm per 2.5 ps)
-RADIUS = 0.3                   # Straal van moleculen (nm)
-DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen (* 2.5 ps)
-###end-solution
+V_0 = 1                        # Startsnelheid van deeltjes
+RADIUS = 0.3                   # Straal van moleculen
+DT = 0.1 * RADIUS / V_0        # Tijdstap om geen botsing te missen
 ```
 
 ### Particle class
@@ -139,7 +128,6 @@ class ParticleClass:
         return 1/2 * self.m * np.dot(self.v, self.v)
     
 def collide_detection(p1: ParticleClass, p2: ParticleClass) -> bool:
-    """ Geeft TRUE als de deeltjes overlappen """
     """ Geeft TRUE als de deeltjes overlappen """
     dx = p1.r[0]-p2.r[0]
     dy = p1.r[1]-p2.r[1]
@@ -349,6 +337,7 @@ plt.xlabel('$t$')
 plt.ylabel('$E_kin$')
 plt.xlim(-0, 100)
 plt.ylim(N/2 - 1e-9, N/2 + 1e-9)
+
 plt.plot(np.linspace(1, 100, 100), energy_tot, '-b')
 
 plt.show()
@@ -679,11 +668,6 @@ track_y2 = []
 ###end-solution
 
 ###begin-solution
-track_x2 = []
-track_y2 = []
-###end-solution
-
-###begin-solution
 botsingen = []
 ###end-solution
 
@@ -692,7 +676,7 @@ for i in range(400):
     counter = 0
     ###end-solution
     
-    for p in particles:
+    for p in particles:        
         p.update_position()    # Update positie        
         p.boxcollision()         # Wandbotsing werkt per deeltje
         
@@ -806,7 +790,7 @@ ani.save("deeltjes.gif", writer="pillow", fps=20)
 
 ```{exercise} Brownian motion in beeld
 :label: ex-brownian-3
-- Draai de onderstaande simulatie een keer en bestudeer de output.
+- Draai de simulatie een keer en bestudeer de output.
 - Voeg zelf een tweede tracking toe van een licht deeltje en verbeter de plot.
 - Wat zijn overeenkomsten en verschillen tussen de beweging van de twee deeltjes?
 - Wat valt je op als je de simulatie een aantal keer runt?

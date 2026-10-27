@@ -8,5 +8,5 @@ _build
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
 __pycache__/
-
+codechecks.md
 .venv

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib
 from matplotlib.collections import LineCollection
 
+    
 def check_brownian_distance_histogram_solution(namespace, plots):
     """Check the solution for exercise 15: Afgelegde weg."""
 
