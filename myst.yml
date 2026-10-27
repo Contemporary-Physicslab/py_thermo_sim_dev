@@ -28,5 +28,7 @@ project:
       - file: codechecks.md
       # - file: gitlog.md
 
+site:
+  template: book-theme
 # extends:
 #   - https://github.com/Contemporary-Physicslab/assets/-/raw/main/style.yml?ref_type=heads
