@@ -28,5 +28,5 @@ project:
       - file: codechecks.md
       # - file: gitlog.md
 
-extends:
-  - https://github.com/Contemporary-Physicslab/assets/-/raw/main/style.yml?ref_type=heads
+# extends:
+#   - https://github.com/Contemporary-Physicslab/assets/-/raw/main/style.yml?ref_type=heads
