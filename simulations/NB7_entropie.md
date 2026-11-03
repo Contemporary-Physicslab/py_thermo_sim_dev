@@ -29,7 +29,7 @@ Net als bij de eerdere simulaties, gaan we uit van dezelfde set van constanten.
 Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over. Pas de diameter van de deeltjes aan naar 0.1 nm. LET OP: We hebben de snelheid van de zuiger nogmaals verlaagd. 
 ```
 
-```python
+```python tags=["NB7_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -55,7 +55,7 @@ V_PISTON_0 = -8                # Startsnelheid van zuiger
 
 En maken we daarnaast ook gebruik van een klasse die het gedrag van deeltjes omschrijft:
 
-```python
+```python tags=["NB7_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -118,7 +118,7 @@ Als je de code hieronder vergelijkt met die van de vorige werkbladen, zal je een
 Plaats in deze code voor de klasse `ControlVolume` de code voor de temperatuur. Deze heb je in de vorige werkbladen ook telkens aangebracht, maar moet volgens bovenstaande punten een klein beetje worden aangepast, omdat het in de klasse geplaatst wordt.
 ```
 
-```python
+```python tags=["NB7_3"]
 class ControlVolume:
     def __init__(self, length, height, N, v_piston, set_temp):
         """ maakt een beheersvolume (constructor) """
@@ -217,7 +217,7 @@ class ControlVolume:
 Om zeker te zijn dat de code functioneert herhalen we eerst een berekening, waarvan we het antwoord al kennen.
 Dit is de simulatie van de druk en de temperatuur als functie van het volume voor een isotherm proces (waarbij de temperatuur dus constant wordt gehouden met behulp van een thermostaat).
 
-```python
+```python tags=["NB7_4"]
 num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 
 volumes = np.zeros(num_steps, dtype=float)
@@ -297,7 +297,7 @@ Omdat de linker en rechter zuiger hier (idealiter) dezelfde temperatuur hebben, 
 ###end-solution
 ```
 
-```python
+```python tags=["NB7_5"]
 # runnen van de simulatie
 num_data = round(abs(BOX_SIZE_0 * 0.4 / (DT * V_PISTON_0)))
 
@@ -328,7 +328,7 @@ for i in range(num_data):
     temperatures2[i] = cv2.temperature
 ```
 
-```python
+```python tags=["NB7_6"]
 # plotten van de druk en temperatuur van beide volumes
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3))
 ax1.set_xlabel('Volume')
@@ -441,7 +441,7 @@ Los de differentiaalvergelijking op en plot deze theoretische voorspelling voor 
 (LET OP: Dit gaat dus niet om een fit, maar om een theoretische voorspelling die volledig gegeven wordt door de begincondities)
 ```
 
-```python
+```python tags=["NB7_7"]
 ###begin-solution
 x_vals = np.linspace(-0.8, 0.8, num_data*2)
 y_vals = (temperatures1[0] + temperatures2[0]) / (2 * np.sqrt(1 - x_vals**2))
@@ -483,7 +483,7 @@ Om te verifiëren dat dit proces reversibel is moeten we het proces ook terug ku
 Beweeg de zuiger terug en controleer de reversibiliteit van het proces
 ```
 
-```python
+```python tags=["NB7_8"]
 # neem de vorige code tussen opgave 3 en 4 over en breidt deze uit. 
 
 ###begin-solution
@@ -573,7 +573,7 @@ Maak een code voor een adiabatische verplaatsing voor de zuigerwand van de posit
 Je kan hiervoor het best starten vanuit de code voor het isotherme proces en deze aanpassen.
 ```
 
-```python
+```python tags=["NB7_9"]
 # ruime voor uitwerking 
 # kopieer hier eerst de code voor de isotherme simulatie
 
@@ -637,7 +637,7 @@ Dat is het gemiddelde van de twee: $\frac{25}{9} T_0$. De ruimtes hebben evenvee
 ###end-solution
 ```
 
-```python
+```python tags=["NB7_10"]
 times = []
 temp1 = []
 temp2 = []
@@ -810,9 +810,5 @@ Dit concept van verloren arbeid wordt verder uitgewerkt met de grootheid 'exergi
 ```
 
 ```{exercise}
-Push je werk naar GitHub.
-```
-
-```python
-
+Klaar? Bekijk de twee versies, kies de beste en doe een `Pull Request` naar `Main`. Je partner reviewt de code, doet eventueel suggesties. Je partner is ook degene die uiteindelijke  de Pull Request goed keurt.
 ```

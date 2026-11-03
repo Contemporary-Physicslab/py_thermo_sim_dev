@@ -34,7 +34,7 @@ Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over.
 ```
 
 
-```python
+```python tags=["NB6_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -61,7 +61,7 @@ V_PISTON_0 = -40               # Startsnelheid van zuiger
 
 De klasse voor het gasmolecuul met de interacties:
 
-```python
+```python tags=["NB6_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -104,7 +104,7 @@ def particle_collision(p1: ParticleClass, p2: ParticleClass):
 
 Voor de randvoorwaarde van het volume is rekening gehouden met een bewegende zuiger, zoals in het vorige werkblad is toegevoegd:
 
-```python
+```python tags=["NB6_3"]
 def top_down_collision(particle: ParticleClass):
     global impulse_outward, box_height
     if abs(particle.r[1]) + particle.R > box_height / 2:
@@ -131,7 +131,7 @@ De functies voor het uitvoeren van de functies over de gehele lijst met deeltjes
 Pas de code voor de functie `temperature` aan naar de functie die je op de vorige werkbladen hebt gebruikt.
 ```
 
-```python
+```python tags=["NB6_3"]
 def create_particles(particles):
     """ Leegmaken en opnieuw aanmaken van deeltjes  in lijst """
     global box_length, box_height
@@ -186,7 +186,7 @@ def take_time_step(particles):
 
 Voordat we de code aanpassen controleren we eerst of alles het doet. Hiervoor maken we zowel een $P,V$-diagram als een $T,V$-diagram (met als toevoeging een $P,T$-diagram) tijdens de werking van de zuiger. Let op! De eenheden van deze grafiek kunnen niet kloppen omdat er niet in verrekend zit welke constanten jij hebt gekozen. 
 
-```python
+```python tags=["NB6_4"]
 particles = []
 volumes = np.zeros(1000, dtype=float)
 pressures = np.zeros(1000, dtype=float)
@@ -245,7 +245,7 @@ $$
 
 Voor het gemak houden we de linker en rechter wand van het volume als zuiger en maken we het thermische contact aan de onder- en bovenwand.
 
-```python
+```python tags=["NB6_5"]
 def top_down_collision(particle: ParticleClass) -> None:
     """ verzorgen van botsingen met wand boven en onder, die als thermostaat kunnen werken """
     global box_height, set_temp, impulse_outward, heat
@@ -282,7 +282,7 @@ Om verdere belasting van de processor tot een minimum te beperken, berekent deze
 Deze worden opgeslagen in de arrays `heats` en `works`.
 We zullen de resultaten van deze simulatie voor een aantal vervolgstappen gebruiken. 
 
-```python
+```python tags=["NB6_6"]
 particles = []
 N_steps = 5000
 volumes = np.zeros(N_steps, dtype=float)
@@ -352,7 +352,7 @@ Let op het - teken!
 Waar we nog verder rekening mee moeten houden is dat een verkeerde waarde voor $n_{init}$ kan zorgen voor hele grote fouten in $a_{init}$ omdat die exponentieel mee telt.
 Omdat $p$ en $V$ fluctueren door het gering aantal deeltjes kunnen we beter waarden voor sampelen waarbij we een keuze maken moeten tussen grotere sample size voor reduceren van ruis en kleine sampele size om het effect van de zuiger klein te houden:
 
-```python
+```python tags=["NB6_7"]
 p0 = np.mean(pressures[100:110])
 p1 = np.mean(pressures[N:N+10])
 V0 = np.mean(volumes[100:110])
@@ -363,7 +363,7 @@ a_init = p0 * V0**(-n_init)
 ```
 ```` 
 
-```python
+```python tags=["NB6_8"]
 p0 = np.mean(pressures[100:110])
 p1 = np.mean(pressures[-10:])
 V0 = np.mean(volumes[100:110])
@@ -375,7 +375,7 @@ print(n_init)
 print(a_init)
 ```
 
-```python
+```python tags=["NB6_9"]
 def power_law(vol, a, n):
     return a * vol**n    
 
@@ -441,7 +441,7 @@ Let hierbij vooral goed op je eenheden.
 Om het jezelf makkelijker te maken kun je de verschillende grootheden onafhankelijk van elkaar plotten en de resultaten controleren, voordat je de definitieve grafiek opstelt.  
 ```
 
-```python
+```python tags=["NB6_10"]
 ###begin-solution
 plt.figure()
 plt.xlabel('Volume [m$^{2}$]')
@@ -463,7 +463,7 @@ Bijzonder is dat deze beide grootheden alleen de snelheid van de moleculen beïn
 Toch zullen we in het volgende werkblad zien dat er een fundamenteel verschil zit in de werking van deze twee macroscopische grootheden. 
 
 ```{exercise}
-Push je werk naar GitHub of ga door met de uitbreiding voor een beoordeling excellent.
+Klaar? Bekijk de twee versies, kies de beste en doe een `Pull Request` naar `Main`. Je partner reviewt de code, doet eventueel suggesties. Je partner is ook degene die uiteindelijke  de Pull Request goed keurt.
 ```
 
 ```{exercise} 🌶 Uitbreiding
@@ -478,6 +478,6 @@ Als we die temperaturen verschillend maken, kunnen we kijken naar de thermische 
 - Geef de warmtegeleidingscoëfficiënt in W/K van het ideaalgas in je simulatie. (Opmerking: De warmtegeleidingscoëfficiënt wordt normaal gegeven in W/mK, maar in onze tweedimensionale simulatie valt de lengteafhankelijkheid er uit)
 ```
 
-```python
+```python  tags=["NB6_11"]
 
 ```
