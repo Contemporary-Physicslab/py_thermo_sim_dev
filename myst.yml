@@ -16,8 +16,8 @@ project:
 
   toc:
     - file: index.md
-    - file: simulations/repostart.md
     - file: simulations/intro.md
+    - file: simulations/repostart.md
     - file: simulations/NB1_deeltjesmodel.md
     - file: simulations/NB2_brownianmotion.md
     - file: simulations/NB3_druktemp.md
