@@ -30,10 +30,10 @@ YT van an
 
 We beginnen weer met de noodzakelijke pakketten en de constanten. Daar voegen we nu een constante aan toe: de startsnelheid van de zuiger. 
 
-```{exercise} Startwaardes
-:label: ex-arbeid-01
-Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over. Let op dat de snelheid van de zuiger tien maal zo laag is als de startsnelheid van de deeltjes.
-```
+% ```{exercise} Startwaardes
+% :label: ex-arbeid-01
+% Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over. Let op dat de snelheid van de zuiger tien maal zo laag is als de startsnelheid van de deeltjes.
+%  ```
 
 ```python
 # ruimte voor uitwerking
@@ -45,9 +45,9 @@ from scipy.optimize import curve_fit
 
 BOX_SIZE_0 = 10              # Hoogte en lengte startvolume in nm
 N = 40                       # Aantal deeltjes
-V_0 = 1                      # Startsnelheid van deeltjes in nm per tijdsstap
+V_0 = 0.4                    # Startsnelheid van deeltjes in nm per ps
 RADIUS = 0.3                 # Straal van moleculen in nm
-DT = 0.03                    # Tijdstap in nm per tijdsstap om geen botsing te missen
+DT = 0.1 * RADIUS / V_0      # Tijdstap in ps (kort om geen botsing te missen)
 V_PISTON_0 = -0.1 * V_0      # Startsnelheid van zuiger 
 # (negatief betekent zowel links als rechts naar binnen gericht)
 
@@ -108,7 +108,7 @@ De simulatie bestaat uit een volume met links en rechts een bewegende wand: de z
 
 Laten we aannemen dat de zuiger altijd in de horizontale richting verplaatst en het volume symmetrisch houdt ten opzichte van de oorsprong, d.w.z. er is een zuiger aan de linker wand die een tegengestelde verplaatsing heeft aan die in de rechter wand. 
 
-We maken eerst een aantal variabelen aan die bij het volume horen:
+Een aantal van de grootheden die we tot nu toe constant hielden, worden in deze simulatie variabel. Dat komt doordat de verplaatsing van de zuiger zorgt voor een verandering (zoals een verandering in de afmeting van het volume). We maken daarom eerst een aantal variabelen aan die bij het volume horen:
 
 ```python
 box_height = BOX_SIZE_0     # hoogte van beheersvolume
@@ -164,7 +164,7 @@ def temperature(particles) -> float:
     temp = 0.0
     for p in particles:
         temp += p.kin_energy
-    temp = 28 * 1.7E-27 * temp / (len(particles) * 1.38E-23) 
+    temp = 1E6 * 28 * 1.7E-27 * temp / (len(particles) * 1.38E-23) # de 1E6 komt van de eenheden nm en ps in het kwadraat
     return temp
     ###end-solution
     return 0.0
@@ -200,7 +200,7 @@ def take_time_step(particles):
 
 
 
-Voordat we nog meer veranderingen aan de code doorvoeren, moeten we eerst controleren of alles nog werkt. Onderstaande functie is een beetje aangepast ten opzichte van vorige werkbladen, omdat we merkten dat de vorm van de pijlen wel eens de mist in ging bij een heel andere keuze voor eenheden in de constanten.
+Voordat we nog meer veranderingen aan de code doorvoeren, moeten we eerst controleren of alles nog werkt. Onderstaande code start met `N` deeltjes en zet 100 tijdsstappen. Daarna worden de posities en de snelheden van de deeltjes grafisch weergegeven. Bij een correct plaatje kunnen we ervan uitgaan dat de code correct is overgenomen van de voorgaande werkbladen. Als het plaatje een foutmelding geeft, kijk dan wat er in jouw versie is misgegaan.
 
 ```python
 particles = []
@@ -222,7 +222,7 @@ for p in particles:
 plt.show()
 ```
 
-Nu implementeren we de zuiger door het toegestane gebied voor de gasdeeltjes bij elke tijdstap te verkleinen met een stap $2v_{\text{piston}}dt$. De factor $2$ is opgenomen omdat zowel de linker en de rechter wand een zuigerwand zijn.  
+Nu implementeren we de zuiger door het toegestane gebied voor de gasdeeltjes bij elke tijdstap te verkleinen met een stap $2v_{\text{piston}}dt$. De factor $2$ is opgenomen omdat zowel de linker als de rechter wand een zuigerwand zijn.  
 
 ```python
 def take_time_step(particles):
@@ -237,9 +237,10 @@ def take_time_step(particles):
 
 Hieronder draaien we een kleine simulatie om te kijken of we de box kleiner zien worden en vervolgens te bestuderen hoe de temperatuur zich gedraagt als functie van het oppervlak/volume. 
 
-```{warning} 
-Verwijder de cel outputs alvorens te pushen naar GitHub! Het filmpje neemt nogal wat geheugen in!
-```
+% waarschuwing niet meer nodig ten gevolge van publiceren als puur markdown bestand
+% ```{warning} 
+% Verwijder de cel outputs alvorens te pushen naar GitHub! Het filmpje neemt nogal wat geheugen in!
+% ```
 
 
 ```python
@@ -260,8 +261,8 @@ def init():
     return dot,
 
 
-# we kiezen het aantal datapunten zodat het volume tot 1/3 van het begin volume reduceert
-num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
+# we kiezen het aantal datapunten zodat het volume tot 1/2 van het begin volume reduceert
+num_steps = round(1/2 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 
 particles = []
 volumes = np.zeros(num_steps, dtype=float)
@@ -274,35 +275,19 @@ create_particles(particles)     # resetten deeltjes
 def update(frame):
     take_time_step(particles)
     dot.set_data([p.r[0] for p in particles], [p.r[1] for p in particles])
-    volumes[i] = box_length * box_height
-    temperatures[i] = temperature(particles)
+    volumes[frame] = box_length * box_height
+    temperatures[frame] = temperature(particles)
     return dot,
     
-ani = FuncAnimation(fig, update, frames=int(num_steps/2), init_func=init, blit=True, interval=50)
+ani = FuncAnimation(fig, update, frames=int(num_steps), init_func=init, blit=True, interval=50)
 HTML(ani.to_jshtml())
 
 
 ```
 
+Van deze simulatie kunnen we nu ook plotten hoe de temperatuur afhangt van het volume, maar dan krijgen we een resultaat dat **niet kan** kloppen. De code zoals we die tot nu toe hebben opgesteld, geeft dus geen goede weergave van de natuurkunde. Plot eerst de grafiek met onderstaande code en dan gaan we dit stap voor stap oplossen. 
+
 ```python
-# we kiezen het aantal datapunten zodat het volume tot 1/3 van het begin volume reduceert
-num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
-
-particles = []
-volumes = np.zeros(num_steps, dtype=float)
-temperatures = np.zeros(num_steps, dtype=float)
-
-box_length = BOX_SIZE_0         # zetten zuiger terug
-v_piston = V_PISTON_0
-create_particles(particles)     # resetten deeltjes     
-
-for i in range(num_steps):
-    take_time_step(particles)
-    volumes[i] = box_length * box_height
-    temperatures[i] = temperature(particles)
-
-temperatures = np.asarray(temperatures)
-
 plt.figure()
 plt.xlabel('Volume')
 plt.ylabel('Temperature')
@@ -311,36 +296,49 @@ plt.plot(volumes, temperatures, '-r')
 plt.show()
 ```
 
-Dit kan niet kloppen. Hier zien we dat de temperatuur vrijwel constant is (let op de vermenigvuldigingsfactor vermeld aan de bovenkant van de verticale as). Maar de zuiger voert arbeid uit, op baiss van de wet van behoud van energie betekent zou de temperatuur moet veranderen!
+Dit kan inderdaad niet kloppen. Hier zien we dat de temperatuur vrijwel constant is (let op: er kan een vermenigvuldigingsfactor vermeld staan aan de bovenkant van de verticale as). Maar de zuiger voert arbeid uit, op baiss van de wet van behoud van energie betekent zou de temperatuur moet veranderen!
 
 Om het model kloppend te maken moeten we kijken naar de botsing van de deeltjes met de wand. In de vorige werkbladen stonden de wanden stil en veranderde de snelheid van de deeltjes alleen van teken in de component loodrecht op de wand. Nu dat de wanden een zuiger zijn en snelheid hebben, moeten we daarvoor corrigeren.
 
-De snelheid van de deeltjes klapt nog steeds om van teken in het referentiestelsel van de wand, maar omdat de wand beweegt ten opzichte van het volume met snelheid $v_{\text{piston}}$, wordt de juiste functie:
+De snelheid van de deeltjes klapt nog steeds om van teken in het referentiestelsel van de wand, maar omdat de wand beweegt ten opzichte van het volume met snelheid $v_{\text{piston}}$, wordt de snelheid na de botsing anders.
+
+```{exercise} Wandbotsing
+:label: ex-arbeid-02a
+Pas de code voor de functie `left_right_collisison` hieronder aan. Om het eenvoudiger te maken splitsen we de functie naar een deel voor de linker en een deel voor de rechter wand. Je kan kijken naar de code die hierboven gegeven stond voor stilstaande wanden en die vervolgens aanpassen voor een bewegende wand. De variabelen die je nodig hebt zijn alvast vermeld bij `global`.
+```
 
 ```python
 def left_right_collision(particle: ParticleClass):
     """ verzorgen van botsingen met wand links en rechts, die als zuiger kunnen bewegen """
     global box_length, v_piston, impulse_outward
-    if abs(particle.r[0]) + particle.R > box_length / 2:
-        particle.r[0] = np.sign(particle.r[0]) * (box_length/2 - particle.R)
-        piston_velocity = np.sign(particle.r[0]) * v_piston
-        relative_velocity = particle.v[0] - piston_velocity           # stelsel zuiger
-        particle.v[0] = -relative_velocity + piston_velocity          # stelsel waarnemer
-        impulse_outward += 2 * particle.m * abs(relative_velocity)    # stoot gevoeld door zuiger
+    if particle.r[0] > box_length/2 - particle.R:
+        # bereken de waarde voor de positie van het deeltje, de snelheid van het deeltje en de verandering van de totale stoot (impulse_outward) voor de rechter wand
+        ###begin-solution
+        particle.r[0] = box_length/2 - particle.R
+        impulse_outward += 2 * particle.m * (particle.v[0] - v_piston)
+        particle.v[0] = -particle.v[0] + 2*v_piston
+        ###end-solution
+    elif particle.r[0] < -box_length/2 + particle.R:
+        # bereken de waarde voor de positie van het deeltje, de snelheid van het deeltje en de verandering van de totale stoot (impulse_outward) voor de linker wand
+        ###begin-solution
+        particle.r[0] = -box_length/2 + particle.R
+        impulse_outward += 2 * particle.m * (-particle.v[0] - v_piston)
+        particle.v[0] = -particle.v[0] - 2*v_piston
+        ###end-solution
 ```
 
-Nu kunnen we de simulatie opnieuw uitvoeren:
+Nu moeten we de simulatie opnieuw uitvoeren, om te controleren of de functie die je zojuist hebt opgesteld ook klopt:
 
 
 ```{exercise} Getallen en eenheden
 :label: ex-arbeid-03
-Pas de code aan, zodat de getalwaardes op de assen kloppen en de juiste eenheden in de titels van de assen vermeld staan.
+Voer de code hieronder uit en pas die aan, zodat de getalwaardes op de assen kloppen en de juiste eenheden in de titels van de assen vermeld staan.
 
-Check eventueel ook of de deeltjes in je eerdere animatie ook sneller bewegen!
+Als de grafiek voor de temperatuur niet aan je verwachting voldoet, controleer dan eventueel ook of de deeltjes in de animatie dat wel doen!
 ```
 
 ```python
-num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
+num_steps = round(1/2 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 
 particles = []
 volumes = np.zeros(num_steps, dtype=float)
@@ -361,7 +359,7 @@ plt.ylabel('Temperature')
 temperatures = np.asarray(temperatures)
 
 ###begin-solution
-plt.xlabel('Volume [m$^{2}$]')
+plt.xlabel('Volume [nm$^{2}$]')
 plt.ylabel('Temperature [K]')
 # volume correct in nm^2
 # temperatures in K
@@ -376,13 +374,15 @@ We zien nu een heel duidelijke afhankelijkheid van de temperatuur op het volume,
 
 ```{exercise} Druksimulatie
 :label: ex-arbeid-04
-Maak een simulatie waarin niet de temperatuur, maar de druk als functie van het volume wordt geplot. Gebruik dezelfde waarden voor het aantal tijdstappen en het volume, zoals in de startcode die je hieronder al ziet. Let ook nu op getallen en eenheden.
+Maak een simulatie waarin niet de temperatuur, maar de druk als functie van het volume wordt geplot. Gebruik dezelfde waarden voor het aantal tijdstappen en het volume, zoals in de startcode die je hieronder al ziet. 
+
+In dit geval hoef je niet te letten op getallen en eenheden.
 ```
 
 ```python
 # breid deze code uit met jouw antwoord
 
-num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
+num_steps = round(1/2 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 particles = []
 volumes = np.zeros(num_steps, dtype=float)
 pressures = np.zeros(num_steps, dtype=float)
@@ -399,7 +399,7 @@ for i in range(num_steps):
     volumes[i] = box_length * box_height
     pressures[i] = pressure 
 
-pressures = pressures * 30 * 1.7E-27 
+pressures = pressures * 28 * 1.7E-27 * 1E24 # UNITS?
 
 plt.figure()
 plt.xlabel('Volume [nm$^2$]')
@@ -418,6 +418,8 @@ Als je simulatie klopt heeft deze grafiek de vorm van een machtsfunctie met een 
 ```{exercise} Exponent
 :label: ex-arbeid-05
 Leg uit welke factor je hier verwacht voor de exponent op basis van de theorie van het boek.
+
+_hint: dit is een experiment waarbij de wanden bewegen en de arbeid dus verandert. We hebben nog geen warmtecontact met de omgeving._
 ```
 
 ```{solution} ex-arbeid-05
@@ -428,6 +430,7 @@ Deze exponent is -gamma (k in het boek). Het gaat hier om een ideaal gas met $2$
 ###end-solution 
 ```
 
+De simulatie geeft een duidelijk afwijkende waarde.
 
 ```{exercise}
 :label: ex-arbeid-06
@@ -447,14 +450,14 @@ def power_law(vol, a, n):
 
 ###begin-solution
 # we fitten de eerste 20 punten niet mee in verband met de integrator vd druk
-popt, pocv = curve_fit(power_law, volumes[20:], pressures[20:], maxfev=8000, p0=[1E-40, -2], bounds=((0, -4),(1E-24,-1)))
+popt, pocv = curve_fit(power_law, volumes[20:], pressures[20:], maxfev=8000, p0=[1E+3, -2])#, bounds=((0, -4),(1E-24,-1)))
 
 x_fit = volumes
 y_fit = power_law(x_fit, *popt)
 
 plt.figure()
 plt.xlabel('Volume [nm$^2$]')
-plt.ylabel('pressure [a.u.]')
+plt.ylabel('pressure [kg/s$^{2}$]')
 
 plt.plot(volumes[20:], pressures[20:], 'bo', label='simulation')
 plt.plot(x_fit, y_fit, 'r-', label='power law with $n = %0.2g * V ^{%0.2f}$' % (popt[0], popt[1]))
@@ -466,28 +469,30 @@ plt.show()
 
 ```
 
-Als je de simulatie een aantal keer uitvoert, zie je dat er een structureel verschil zit tussen de waarde die je verwacht en de waarde die je uit de fit krijgt.
+Zoals al stond vermeld, zie je dat er een structureel verschil zit tussen de waarde die je verwacht en de waarde die je uit de fit krijgt. Dat komt doordat het model dat we hier hebben gebouwd niet voldoet aan de eisen voor een ideaal gas. Zoek op welke eisen er bij een ideaal gas horen en beantwoordt de volgende vraag:
 
 ```{exercise} Afwijking
 :label: ex-arbeid-07
-Wat is de belangrijkste reden voor deze afwijking? Geef een methode van aanpak waarmee je voor deze simulatie kan verifiëren of dit inderdaad de juiste is. (Je hoeft dit niet uit te voeren, maar het mag natuurlijk wel)
+Wat is de eis voor een ideaal gas waar onze simulatie niet aan voldoet? Wat zou de makkelijkste aanpassing zijn aan onze code, zodat deze _beter_ overeenkomt met de verwachte exponent? (Je hoeft dit niet uit te voeren, maar het mag natuurlijk wel.)
 ```
 
-```{solution} reason_power
+```{solution} ex-arbeid-07
 Jouw antwoord hier...
+
 ###begin-solution
-De belangrijkste reden voor deze afwijking is dat onze deeltjes een eindige grootte hebben. We kunnen dat effect verkleinen door de deeltjes een kleinere straal te geven. Als alternatief kan je de formule van Van Der Waals in de fit-functie opnemen en het dode volume bepalen met de fit. Dat lukt alleen als je de beginwaardes voldoende correct hebt gekozen en ook voldoende domein hebt gekozen voor het volume.  
+De belangrijkste reden voor deze afwijking is dat onze deeltjes een eindige grootte hebben. We kunnen dat effect verkleinen door de deeltjes een kleinere straal te geven. Prlbeem is dat de deeltjes dan minder onderling botsen en dat ze dus minder snel in thermisch evenwicht met elkaar komen. 
+Als alternatief kan je de formule van Van Der Waals in de fit-functie opnemen en het dode volume bepalen met de fit. Dat lukt alleen als je de beginwaardes voldoende correct hebt gekozen en ook voldoende domein hebt gekozen voor het volume.  
 ###end-solution
 ```
 
 ```python
-# Ruimte voorverificatie
+# Ruimte voorverificatie als je dat wilt
 
 ###begin-solution
 # breid deze code uit met jouw antwoord
 RADIUS = 1E-10                 # Straal van moleculen
 
-num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
+num_steps = round(1/2 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 particles = []
 volumes = np.zeros(num_steps, dtype=float)
 pressures = np.zeros(num_steps, dtype=float)
@@ -504,7 +509,7 @@ for i in range(num_steps):
     volumes[i] = box_length * box_height
     pressures[i] = pressure 
 
-pressures = pressures * 30 * 1.7E-27 
+pressures = pressures * 28 * 1.7E-27 * 1E24 # UNITS?
 
 plt.show()
 def power_law(vol, a, n):
@@ -513,14 +518,14 @@ def power_law(vol, a, n):
 
 
 # we fitten de eerste 20 punten niet mee in verband met de integrator vd druk
-popt, pocv = curve_fit(power_law, volumes[40:], pressures[40:], maxfev=8000, p0=[1E-40, -2], bounds=((0, -4),(1E-24,-1)))
+popt, pocv = curve_fit(power_law, volumes[40:], pressures[40:], maxfev=8000, p0=[1E3, -2])#, bounds=((0, -4),(1E-24,-1)))
 
 x_fit = volumes
 y_fit = power_law(x_fit, *popt)
 
 plt.figure()
 plt.xlabel('Volume [nm$^2$]')
-plt.ylabel('pressure [a.u.]')
+plt.ylabel('pressure [kgs$^{-2}$]')
 
 plt.plot(volumes[40:], pressures[40:], 'bo', label='simulation')
 plt.plot(x_fit, y_fit, 'r--', label='power law with $n = %0.2g * V ^{%0.2f}$' % (popt[0], popt[1]))
@@ -529,20 +534,20 @@ plt.legend()
 
 plt.show()
 
-RADIUS = 3E-10                 # Straal van moleculen
+RADIUS = 0.3                 # Zet straal terug om problemen te voorkomen bij uitvoer
 ###end-solution
 ```
 
 ## Eerste hoofdwet
-Een goede controle voor ons simulatie is te onderzoeken of deze voldoet aan de eerste hoofdwet van de thermodynamica. 
+Een goede controle voor de validiteit van onze simulatie is te onderzoeken of deze voldoet aan de eerste hoofdwet van de thermodynamica. 
 
-Omdat er (nog) geen warmte wordt uitgewisseld, moeten we alleen de hoeveelheid arbeid bepalen. De arbeid wordt geleverd door de zuiger(s) op de deeltjes. Dus in de functie waar we de botsingen van de deeltjes met de wand behandelen, kunnen we ook de verrichte arbeid bepalen. De arbeid wordt gegeven\ door:
+Omdat er (nog) geen warmte wordt uitgewisseld, moeten we alleen de hoeveelheid arbeid bepalen. De arbeid wordt geleverd door de zuiger(s) op de deeltjes. Dus in de functie waar we de botsingen van de deeltjes met de wand behandelen, kunnen we ook de verrichte arbeid bepalen. De arbeid wordt gegeven door:
 
 $$
     W = \int_1^2 P dV
 $$
 
-Hier staan de $1$ voor de begintoestand en de $2$ voor de eindtoestand van het proces. In de differentiaalvorm wordt dit geschreven als:
+Net als in het derde Notebook staat $P$ (met hoofdletter) hier voor de druk en $V$ voor het volume. De $1$ staat daarbij voor de begintoestand en de $2$ voor de eindtoestand van het proces. In de differentiaalvorm wordt dit geschreven als:
 
 $$
     \delta W = P dV
@@ -554,35 +559,56 @@ $$
     \Delta W = P \Delta V \stackrel{2D}{=} P \Delta A = P h v_{\text{piston}}  \Delta t = \frac{\Delta p}{h \Delta t} h v_{\text{piston}} \Delta t = v_{\text{piston}}\Delta p
 $$
 
-waarin $h$ de hoogte is van de zuiger.
+waarin $h$ de hoogte is van de zuiger. Let op dat $\Delta p$ voor de stoot staat die we in Notebook 3 hebben behandeld. Als je deze afleiding niet kan volgen, kan je in dat notebook de achtergrond nog eens nalezen.
 
 Dit betekent dat we de arbeid per tijdstap in onze code kunnen bepalen op hetzelfde moment dat we de druk bepalen met behulp van de gezamenlijke stoot van de moleculen. Daarvoor moeten we de code voor de functie `left_right_collision` nogmaals aanpassen:
+
+```{exercise} WandbotsingP2
+:label: ex-arbeid-07a
+Pas de code voor de functie `left_right_collisison` hieronder nogmaals aan. Kopieer eerst de code die je bij de opgave Wandbotsing hebt gemaakt in deze cel en pas deze daarna aan zodat je ook de arbeid berekend. De variabelen die je nodig hebt zijn alvast vermeld bij `global`. _Hint: Natuurlijk mag je een tijdelijke variabele maken, als dat de code eenvoudiger maakt._
+```
 
 ```python
 def left_right_collision(particle: ParticleClass):
     """ verzorgen van botsingen met wand links en rechts, die als zuiger kunnen bewegen """
     global box_length, v_piston, impulse_outward, work
-    if abs(particle.r[0]) + particle.R > box_length / 2:
-        particle.r[0] = np.sign(particle.r[0]) * (box_length/2 - particle.R)
-        piston_velocity = np.sign(particle.r[0]) * v_piston
-        relative_velocity = particle.v[0] - piston_velocity  # stelsel zuiger
-        particle.v[0] = -relative_velocity + piston_velocity # stelsel waarnemer
-        impulse_outward += 2 * particle.m * abs(relative_velocity)
-        work += 2 * particle.m * relative_velocity * piston_velocity
+    if particle.r[0] > box_length/2 - particle.R:
+        # kopieer de correcte code voor de positie van het deeltje, de snelheid van het deeltje, en de stoot als gevolg van de botsing met de rechter wand uit opgave 'wandbotsing'
+        # voeg nu ook de arbeid toe
+        ###begin-solution
+        particle.r[0] = box_length/2 - particle.R
+        impulse = 2 * particle.m * (particle.v[0] - v_piston)
+        particle.v[0] = -particle.v[0] + 2 * v_piston
+        impulse_outward += impulse
+        work += impulse * v_piston
+        ###end-solution
+    elif particle.r[0] - particle.R < -box_length / 2:
+        # kopieer de correcte code voor de positie van het deeltje, de snelheid van het deeltje, en de stoot als gevolg van de botsing met de linker wand uit opgave 'wandbotsing'
+        # voeg nu ook de arbeid toe
+        ###begin-solution
+        particle.r[0] = -box_length / 2 + particle.R
+        impulse = 2 * particle.m * (-particle.v[0] - v_piston)
+        particle.v[0] = -particle.v[0] - 2 * v_piston
+        impulse_outward += impulse
+        work += impulse * v_piston
+        ###end-solution 
 ```
 
 Voordat we een simulatie draaien is het goed even stil te staan en na te denken. Net als bij een experiment in het lab doorlopen we bewust de onderzoekscyclus. We moeten daarvoor eerst een hypothese opstellen en daarna pas de simulatie uitvoeren. 
 
+De eerste hoofdwet van de thermodynamica stelt dat energie behouden moet blijven. In het geval van deze eenvoudige simulatie is energie alleen aanwezig in de vorm van arbeid en temperatuur. Als we deze twee grootheden tegen elkaar uitzetten kunnen we zien of de eerste hoofdwet geldig is.
+
 
 ```{exercise} Eerste Hoofdwet
 :label: ex-arbeid-08
-Welke twee grootheden kan je nu tegen elkaar uitzetten om te valideren of de simulatie aan de eerste hoofdwet voldoet? En welke grafiek verwacht je dan dat daar uitkomt?
+Hoe verwacht je dat deze grafiek er uitziet?
 ```
 
 ```{solution} ex-arbeid-08
 Hier jouw antwoord...
+
 ###begin-solution
-Omdat er geen warmteuitwissling plaatsvindt, zijn alleen de interne energie en de arbeid interessant. De interne energie wordt alleen gegeven door de kinetische term, want er is geen potentiële energie zonder krachtwisselwerking. We moeten dus de temperatuur plotten tegen arbeid. In welke vorm je dat doet, maakt niet echt uit. Als je hun waardes direct plot verwacht je een lineair verband: $\Delta W = \Delta E_{kin} \propto T$ 
+Als je hun waardes direct plot verwacht je een lineair verband: $\Delta W = \Delta E_{kin} \propto T$ 
 ###end-solution 
 ```
 
@@ -607,11 +633,13 @@ works = np.zeros(1000, dtype=float)
 for i in range(1000):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
-    works[i] = work
+    works[i] = work * 28 * 1.7E-27 * 1E6
+
+pressures = pressures * 28 * 1.7E-27 * 1E24 # UNITS?
 
 plt.figure()
-plt.xlabel('Temperature')
-plt.ylabel('Work')
+plt.xlabel('Temperature [K]')
+plt.ylabel('Work [J]')
 
 plt.plot(temperatures, works, '-r')
 
@@ -621,7 +649,7 @@ plt.show()
 ```
 
 ## Reversibiliteit
-Als laatste onderdeel van dit werkblad maken we een eenvoudige cyclus. We comprimeren het volume gedurende 1000 tijdstappen en keren daarna in 1000 gelijke tijdstappen terug naar het startvolume. 
+Als laatste onderdeel van dit werkblad maken we een eenvoudige cyclus. We comprimeren het volume gedurende 1000 tijdstappen en keren daarna in 1000 gelijke tijdstappen terug naar het startvolume. Net als hierboven plotten we de arbeid tegen de temperatuur om te zien of we blijven voldoen aan de eerste hoofdwet.
 
 ```{exercise} Terugkeren
 :label: ex-arbeid-10
@@ -639,6 +667,7 @@ box_length = BOX_SIZE_0         # zetten zuiger terug
 v_piston = V_PISTON_0
 create_particles(particles)     # resetten deeltjes 
 
+# geef hier de code voor de grafiek tijdens de 1000 tijdsstapjes waarin het volume wordt verkleind.
 ###begin-solution
 
 temperatures = np.zeros(2000, dtype=float)
@@ -647,19 +676,21 @@ works = np.zeros(2000, dtype=float)
 for i in range(1000):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
-    works[i] = work
+    works[i] = work  * 28 * 1.7E-27 * 1E6
 
 ###end-solution
 v_piston = -V_PISTON_0 # zuiger richting wordt omgedraaid
+# geef hier de code voor de grafiek tijdens de 1000 tijdsstapjes waarin het volume wordt vergroot tot de beginpositie.
+# Plot vervolgens de twee grafieken samen in een assenstelsel en geef ze een verschillende kleur.
 ###begin-solution
 for i in range(1000,2000):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
-    works[i] = work
+    works[i] = work  * 28 * 1.7E-27 * 1E6
 
 plt.figure()
 plt.xlabel('Temperature [K]')
-plt.ylabel('Work [a.u.]')
+plt.ylabel('Work [J]')
 
 temperatures = np.asarray(temperatures)
 
@@ -692,17 +723,17 @@ works = np.zeros(400, dtype=float)
 for i in range(200):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
-    works[i] = work
+    works[i] = work * 28 * 1.7E-27 * 1E6
     
 v_piston = -5 * V_PISTON_0
 for i in range(200, 400):
     take_time_step(particles)
     temperatures[i] = temperature(particles)
-    works[i] = work
+    works[i] = work * 28 * 1.7E-27 * 1E6
 
 plt.figure()
-plt.xlabel('Temperature')
-plt.ylabel('Work')
+plt.xlabel('Temperature [K]')
+plt.ylabel('Work [J]')
 
 temperatures = np.asarray(temperatures)
 
@@ -713,7 +744,7 @@ plt.show()
 ###end-solution
 ```
 
-In deze laatste simulatie zie je (bij een correcte code) dat nog altijd netjes wordt voldaan aan de eerste hoofdwet. Ondanks dat, zie je dat het systeem niet terugkeert naar de begintoestand. In het boek wordt dit omschreven in het deel over 'quasi-equilibrium': Processen moeten voldoende traag plaatsvinden zodat er zich een evenwicht kan vormen binnen het gas. Als processen te snel plaatsvinden is er geen sprake van equilibrium en kun je de macroscopische thermodynamische formules niet langer gebruiken.
+In deze laatste simulatie zie je (bij een correcte code) dat nog altijd netjes wordt voldaan aan de eerste hoofdwet. Ondanks dat, zie je dat het systeem niet terugkeert naar de begintoestand. In het boek wordt dit omschreven in het deel over 'quasi-equilibrium': Processen moeten voldoende traag plaatsvinden zodat er zich een evenwicht kan vormen binnen het gas. Als processen te snel plaatsvinden is er geen sprake van equilibrium en kun je de macroscopische thermodynamische formules niet langer gebruiken. 
 
 ```{exercise} Getallen en eenheden hh
 :label: ex-arbeid-12
@@ -732,4 +763,8 @@ In bovenstaande simulatie hebben de twee zuigers een tegengestelde beweging. Maa
 - Meet de temperatuur van het gas als functie van de verplaatsing van de zuigers. Beweeg de zuigers minimaal over de halve lengte van het volume. 
 - Varieer de snelheid van de zuigers en de starttemperatuur van het gas en onderzoek de resultaten.
 - Verklaar het gedrag. Doe dit zowel op een microscopisch niveau (met stuiterende balletjes met een impuls en een energie) als op een macroscopisch niveau (met druk, volume en temperatuur)
+```
+
+```python
+
 ```
