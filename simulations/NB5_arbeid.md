@@ -722,7 +722,7 @@ Zorg ervoor dat er in de grafiek hierboven daadwerkelijk SI-eenheden op de assen
 
 
 ```{exercise}
-Maak je notebook leeg (clear output) en push je werk naar GitHub. Kies of je door gaat met de extra opdrachten voor een 'excellent' beoordeling.
+Klaar? Bekijk de twee versies, kies de beste en doe een `Pull Request` naar `Main`. Je partner reviewt de code, doet eventueel suggesties. Je partner is ook degene die uiteindelijke  de Pull Request goed keurt.
 ```
 
 
