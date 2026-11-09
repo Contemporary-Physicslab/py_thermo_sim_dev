@@ -1,6 +1,8 @@
 # NB 8: Entropie 🌶
 
-
+```{warning}
+Vergeet niet naar main te gaan, te pullen, een nieuwe branch te maken vanaf main en daarin verder te werken!
+```
 ## Doelen
 
 In hoofdstukken 5 en 6 van het boek wordt er verder ingegaan op de reversibiliteit van processen.
