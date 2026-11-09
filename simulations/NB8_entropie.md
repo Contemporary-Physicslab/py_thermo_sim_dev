@@ -136,7 +136,7 @@ class ControlVolume:
     def piston_collision(self, particle: ParticleClass) -> None:
         """ verzorgen van botsingen met wand links en rechts, die als zuiger kunnen bewegen """
         # plaats hier de code van `left_right_collision uit werkboek 5 en pas deze aan zodat deze werkt in de klasse
-        ###begiin-solution
+        ###begin-solution
         if abs(particle.r[0]) + particle.R > self.length / 2:
             particle.r[0] = np.sign(particle.r[0]) * (self.length/2 - particle.R)
             piston_velocity = np.sign(particle.r[0]) * self.v_piston

@@ -226,7 +226,7 @@ print(b_1)
 E_g = 1.602E-19 * np.linspace(0.5, 2, 1000)
 E_g_T = np.array([])
 
-### begin-solution
+###begin-solution
 for i in range(len(E_g)):
     E_g_T = np.append(E_g_T, E_T_2(10e-9, E_g[i]))
     
@@ -243,6 +243,6 @@ plt.show()
 idx = np.argmax(ratio)
 optimum = E_g[idx] / 1.6e-19
 
-### end-solution
+###end-solution
 print('Optimum bij', optimum, 'eV')
 ```
