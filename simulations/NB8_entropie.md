@@ -1,4 +1,4 @@
-# NB 7: Entropie 🌶
+# NB 8: Entropie 🌶
 
 
 ## Doelen
@@ -22,40 +22,26 @@ In dit werkblad komen de volgende onderdelen langs:
 
 ## Laden van eerdere code
 
-Net als bij de eerdere simulaties, gaan we uit van dezelfde set van constanten. 
+Net als bij de eerdere simulaties, gaan we uit van dezelfde set van constanten. We passen alleen de straal van de gasdeeltjes aan naar een kleinere waarde. 
 
-```{exercise} constanten
-:label: ex-entropy-01a
-Neem de constanten die je in het vorige werkblad hebt gekozen hieronder over. Pas de diameter van de deeltjes aan naar 0.1 nm. LET OP: We hebben de snelheid van de zuiger nogmaals verlaagd. 
-```
-
-```python
+```python tags=["NB8_1"]
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-BOX_SIZE_0 = 0               # Hoogte en lengte startvolume
+BOX_SIZE_0 = 10              # Hoogte en lengte startvolume in nm
 N = 40                       # Aantal deeltjes
-V_0 = 0                      # Startsnelheid van deeltjes
-RADIUS = 0                   # Straal van moleculen
-DT = 0                       # Tijdstap om geen botsing te missen
+V_0 = 0.4                    # Startsnelheid van deeltjes in nm per ps
+RADIUS = 0.1                 # Straal van moleculen in nm
+DT = 0.1 * RADIUS / V_0      # Tijdstap in ps (kort om geen botsing te missen)
 V_PISTON_0 = -0.02 * V_0     # Startsnelheid van zuiger 
-k_B = 1.38E-23
 # (negatief betekent zowel links als rechts naar binnen gericht)
-
-###begin-solution
-BOX_SIZE_0 = 1E-8              # Hoogte en breedte startvolume
-N = 40                         # Aantal deeltjes
-V_0 = 400                      # Startsnelheid van deeltjes
-RADIUS = 1E-10                 # Straal van moleculen
-DT = 7.5E-14                   # Tijdstap om geen botsing te missen 0.1 * RADIUS / V_0
-V_PISTON_0 = -8                # Startsnelheid van zuiger 
-###end-solution
+k_B = 1.38E-23               # constante van Boltzmann in J/K
 ```
 
 En maken we daarnaast ook gebruik van een klasse die het gedrag van deeltjes omschrijft:
 
-```python
+```python tags=["NB8_2"]
 class ParticleClass:
     def __init__(self, m, v, r, R):
         """ maakt een deeltje (constructor) """
@@ -116,9 +102,10 @@ Als je de code hieronder vergelijkt met die van de vorige werkbladen, zal je een
 ```{exercise} temperatuur
 :label: ex-entropy-01b
 Plaats in deze code voor de klasse `ControlVolume` de code voor de temperatuur. Deze heb je in de vorige werkbladen ook telkens aangebracht, maar moet volgens bovenstaande punten een klein beetje worden aangepast, omdat het in de klasse geplaatst wordt.
+Daarna plaats je de code van de functie `top_down_collision` van werkboek 6 in de functie `thermostat_collision`en de code van de functie `left_right_collision` van werkboek 5 in de functie `piston_collision`
 ```
 
-```python
+```python tags=["NB8_3"]
 class ControlVolume:
     def __init__(self, length, height, N, v_piston, set_temp):
         """ maakt een beheersvolume (constructor) """
@@ -148,6 +135,8 @@ class ControlVolume:
 
     def piston_collision(self, particle: ParticleClass) -> None:
         """ verzorgen van botsingen met wand links en rechts, die als zuiger kunnen bewegen """
+        # plaats hier de code van `left_right_collision uit werkboek 5 en pas deze aan zodat deze werkt in de klasse
+        ###begiin-solution
         if abs(particle.r[0]) + particle.R > self.length / 2:
             particle.r[0] = np.sign(particle.r[0]) * (self.length/2 - particle.R)
             piston_velocity = np.sign(particle.r[0]) * self.v_piston
@@ -155,9 +144,12 @@ class ControlVolume:
             particle.v[0] = -relative_velocity + piston_velocity # stelsel waarnemer
             self._impulse_out += 2 * particle.m * abs(relative_velocity)
             self._work += 2 * particle.m * relative_velocity * piston_velocity
+        ###end-solution
 
     def thermostat_collision(self, particle: ParticleClass) -> None:
         """ verzorgen van botsingen met wand boven en onder, die als thermostaat kunnen werken """
+        # plaats hier de code van `top_down_collision` uit werkboek 6 en pas deze aan zodat deze werkt in de klasse
+        ###begin-solution
         if abs(particle.r[1]) + particle.R > self.height / 2:
             temp_factor = (self.set_temp/self.temperature) if self.set_temp > 0 else 1.0
             particle.r[1] = np.sign(particle.r[1]) * (self.height/2 - particle.R)
@@ -165,6 +157,7 @@ class ControlVolume:
             self._heat += particle.kin_energy * (temp_factor - 1)
             particle.v *= temp_factor**0.5
             particle.v[1] *= -1
+        ###end-solution
 
     def handle_walls(self) -> None:
         """ verzorgen van alle botsingen met wanden en aanpassen waarde voor druk """
@@ -187,7 +180,7 @@ class ControlVolume:
         ###begin-solution
         for p in self.particles:
             temp += p.kin_energy
-        temp = 28 * 1.7E-27 * temp / (len(self.particles) * k_B)
+        temp = 1E6 * 28 * 1.7E-27 * temp / (len(self.particles) * k_B)
         ###end-solution
         return temp   
 
@@ -217,7 +210,7 @@ class ControlVolume:
 Om zeker te zijn dat de code functioneert herhalen we eerst een berekening, waarvan we het antwoord al kennen.
 Dit is de simulatie van de druk en de temperatuur als functie van het volume voor een isotherm proces (waarbij de temperatuur dus constant wordt gehouden met behulp van een thermostaat).
 
-```python
+```python tags=["NB8_4"]
 num_steps = round(2/3 * BOX_SIZE_0 / (2 * -V_PISTON_0 * DT))
 
 volumes = np.zeros(num_steps, dtype=float)
@@ -297,7 +290,7 @@ Omdat de linker en rechter zuiger hier (idealiter) dezelfde temperatuur hebben, 
 ###end-solution
 ```
 
-```python
+```python tags=["NB8_5"]
 # runnen van de simulatie
 num_data = round(abs(BOX_SIZE_0 * 0.4 / (DT * V_PISTON_0)))
 
@@ -328,7 +321,7 @@ for i in range(num_data):
     temperatures2[i] = cv2.temperature
 ```
 
-```python
+```python tags=["NB8_6"]
 # plotten van de druk en temperatuur van beide volumes
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3))
 ax1.set_xlabel('Volume')
@@ -441,11 +434,11 @@ Los de differentiaalvergelijking op en plot deze theoretische voorspelling voor 
 (LET OP: Dit gaat dus niet om een fit, maar om een theoretische voorspelling die volledig gegeven wordt door de begincondities)
 ```
 
-```python
+```python tags=["NB8_7"]
 ###begin-solution
 x_vals = np.linspace(-0.8, 0.8, num_data*2)
 y_vals = (temperatures1[0] + temperatures2[0]) / (2 * np.sqrt(1 - x_vals**2))
-x_vals = x_vals * 1E-16 + 1E-16
+x_vals = x_vals * 1E2 + 1E2
 
 plt.figure()
 plt.xlabel('Volume')
@@ -483,7 +476,7 @@ Om te verifiëren dat dit proces reversibel is moeten we het proces ook terug ku
 Beweeg de zuiger terug en controleer de reversibiliteit van het proces
 ```
 
-```python
+```python tags=["NB8_8"]
 # neem de vorige code tussen opgave 3 en 4 over en breidt deze uit. 
 
 ###begin-solution
@@ -573,7 +566,7 @@ Maak een code voor een adiabatische verplaatsing voor de zuigerwand van de posit
 Je kan hiervoor het best starten vanuit de code voor het isotherme proces en deze aanpassen.
 ```
 
-```python
+```python tags=["NB8_9"]
 # ruime voor uitwerking 
 # kopieer hier eerst de code voor de isotherme simulatie
 
@@ -637,7 +630,7 @@ Dat is het gemiddelde van de twee: $\frac{25}{9} T_0$. De ruimtes hebben evenvee
 ###end-solution
 ```
 
-```python
+```python tags=["NB8_10"]
 times = []
 temp1 = []
 temp2 = []
@@ -804,13 +797,8 @@ We zien dus dat de entropie die we in dit geval hebben berekend een maat is voor
 
 We kunnen dit ook andersom zeggen: de hoeveelheid entropie die tijdens het proces gecreëerd wordt is een maat voor de hoeveelheid beschikbare arbeid die we tijdens het proces hebben verloren door het niet perfect reversibel uit te voeren. 
 
-
-```{note}
-Dit concept van verloren arbeid wordt verder uitgewerkt met de grootheid 'exergie' die wordt behandeld in hoofdstuk 7 van het boek. Dit is geen onderdeel van de stof van het vak thermodynamica van dit kwartaal. 
-```
-
 ```{exercise}
-Push je werk naar GitHub.
+Klaar? Bekijk de twee versies, kies de beste en doe een `Pull Request` naar `Main`. Je partner reviewt de code, doet eventueel suggesties. Je partner is ook degene die uiteindelijke  de Pull Request goed keurt.
 ```
 
 ```python
